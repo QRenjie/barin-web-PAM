@@ -60,9 +60,23 @@ html,
   --fantd-color-icon-active: rgb(var(--fe-color-brand));
   --fantd-color-icon-disabled: var(--fe-color-text-disabled);
 
+  /* Antd Form */
+  .ant-form,
+  .ant-form-css-var {
+    --fantd-form-label-color: rgb(var(--fe-color-primary-text) / 0.88);
+    --fantd-form-label-font-size: 14px;
+    --fantd-form-item-margin-bottom: 16px;
+  }
+
   /* Antd Input */
   .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-input-textarea,
   .ant-input-css-var {
+    --fantd-input-color: var(--fe-color-text);
+    --fantd-input-bg: var(--fe-color-bg-container);
+    --fantd-input-placeholder-color: rgb(var(--fe-color-primary-text) / 0.35);
+    --fantd-input-border-color: rgb(var(--fe-color-primary-border));
     --fantd-input-padding-block: 4px;
     --fantd-input-padding-block-sm: 0px;
     --fantd-input-padding-block-lg: 7px;
@@ -299,13 +313,24 @@ html,
   --fantd-color-icon-disabled: var(--fe-color-text-disabled);
 
   .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-input-textarea,
   .ant-input-css-var {
+    --fantd-input-color: var(--fe-color-text);
+    --fantd-input-bg: var(--fe-color-bg-container);
+    --fantd-input-placeholder-color: rgb(var(--fe-color-primary-text) / 0.35);
+    --fantd-input-border-color: rgb(var(--fe-color-primary-border));
     --fantd-input-hover-border-color: var(--fe-color-primary-hover);
     --fantd-input-active-border-color: var(--fe-color-primary-active);
     --fantd-input-active-shadow: 0 0 0 2px var(--fe-color-primary-bg);
     --fantd-input-hover-bg: rgb(var(--fe-color-elevated));
     --fantd-input-active-bg: rgb(var(--fe-color-elevated));
     --fantd-input-addon-bg: rgb(var(--fe-color-primary-text) / 0.02);
+  }
+
+  .ant-form,
+  .ant-form-css-var {
+    --fantd-form-label-color: rgb(var(--fe-color-primary-text) / 0.88);
   }
 
   .ant-btn,
@@ -486,7 +511,12 @@ html,
   --fantd-color-icon-disabled: var(--fe-color-text-disabled);
 
   .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-input-textarea,
   .ant-input-css-var {
+    --fantd-input-color: var(--fe-color-text);
+    --fantd-input-bg: var(--fe-color-bg-container);
+    --fantd-input-placeholder-color: rgb(var(--fe-color-primary-text) / 0.35);
     --fantd-input-bg: var(--fe-color-bg-container);
     --fantd-input-hover-bg: rgb(var(--fe-color-elevated));
     --fantd-input-active-bg: rgb(var(--fe-color-elevated));
@@ -495,6 +525,11 @@ html,
     --fantd-input-hover-border-color: var(--fe-color-primary-hover);
     --fantd-input-active-border-color: var(--fe-color-primary-active);
     --fantd-input-active-shadow: 0 0 0 2px var(--fe-color-primary-bg);
+  }
+
+  .ant-form,
+  .ant-form-css-var {
+    --fantd-form-label-color: rgb(var(--fe-color-primary-text) / 0.88);
   }
 
   .ant-btn,

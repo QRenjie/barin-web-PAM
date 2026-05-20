@@ -4,7 +4,7 @@ import { isString } from 'lodash';
 import { inject, injectable } from '@shared/container';
 import { API_USER_NOT_FOUND } from '@config/i18n-identifier/api';
 import { I } from '@config/ioc-identifiter';
-import type { UserSchema } from '@schemas/UserSchema';
+import { UserRole, type UserSchema } from '@schemas/UserSchema';
 import type { SeedServerConfigInterface } from '@interfaces/SeedConfigInterface';
 import { ServerAuth } from './ServerAuth';
 import { RequestLogsRepository } from '../repositorys/RequestLogsRepository';
@@ -62,11 +62,33 @@ export class UserService implements UserServiceInterface {
     });
     this.supabaseBridge.throwIfError(result);
 
-    if (!result.data.user) {
-      throw new Error(API_USER_NOT_FOUND);
+    const { user, session } = result.data;
+
+    // Supabase 开启「Confirm email」时：注册成功但 user/session 为空，需先点邮件链接
+    if (!user) {
+      this.logger.info('signUp pending email confirmation', {
+        email: params.email
+      });
+      return {
+        id: '',
+        email: params.email,
+        role: UserRole.USER,
+        password: '',
+        credential_token: '',
+        email_confirmed_at: null,
+        created_at: new Date().toISOString(),
+        updated_at: null
+      };
     }
 
-    return this.supabaseBridge.toUserSchema(result.data.user);
+    const schema = this.supabaseBridge.toUserSchema(user);
+
+    // 已创建用户但未下发 session（常见于待验证邮箱）
+    if (!session && user.email_confirmed_at == null) {
+      schema.email_confirmed_at = null;
+    }
+
+    return schema;
   }
 
   /**

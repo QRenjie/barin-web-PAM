@@ -91,3 +91,52 @@
   color: rgb(var(--fe-color-tertiary-text));
   background-color: rgb(var(--fe-color-elevated));
 }
+
+/* Project form modal — label, input text, placeholder */
+.project-asset-modal .ant-modal-close {
+  color: rgb(var(--fe-color-primary-text) / 0.55);
+}
+
+.project-asset-modal .ant-modal-close:hover {
+  color: rgb(var(--fe-color-primary-text) / 0.88);
+}
+
+.project-asset-form .ant-form-item-label > label,
+.project-asset-form .ant-form-item .ant-form-item-label > label {
+  color: rgb(var(--fe-color-primary-text) / 0.88) !important;
+}
+
+.project-asset-form .ant-form-item-required::before {
+  color: var(--fe-color-error) !important;
+}
+
+.project-asset-form .ant-input,
+.project-asset-form .ant-input-affix-wrapper,
+.project-asset-form textarea.ant-input {
+  color: var(--fe-color-text) !important;
+  background-color: var(--fe-color-bg-container) !important;
+  border-color: rgb(var(--fe-color-primary-border)) !important;
+}
+
+.project-asset-form .ant-input::placeholder,
+.project-asset-form textarea.ant-input::placeholder {
+  color: rgb(var(--fe-color-primary-text) / 0.35) !important;
+}
+
+.project-asset-form .ant-input:hover,
+.project-asset-form .ant-input-affix-wrapper:hover,
+.project-asset-form textarea.ant-input:hover {
+  border-color: var(--fe-color-primary-hover) !important;
+}
+
+.project-asset-form .ant-input:focus,
+.project-asset-form .ant-input-focused,
+.project-asset-form .ant-input-affix-wrapper-focused,
+.project-asset-form textarea.ant-input:focus {
+  border-color: var(--fe-color-primary-active) !important;
+  box-shadow: 0 0 0 2px var(--fe-color-primary-bg) !important;
+}
+
+.project-asset-form .ant-form-item-explain-error {
+  color: var(--fe-color-error) !important;
+}

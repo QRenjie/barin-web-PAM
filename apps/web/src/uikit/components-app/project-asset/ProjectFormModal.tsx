@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import type { HomeI18nInterface } from '@config/i18n-mapping/HomeI18n';
 import type { ProjectAsset } from '@interfaces/ProjectAsset';
 import type { ProjectUpsertInput } from '@schemas/ProjectSchema';
+import { projectAssetTheme } from './projectAssetTheme';
 
 export type ProjectFormValues = {
   name: string;
@@ -75,6 +76,8 @@ export function ProjectFormModal({
     }
   }, [open, editing, form]);
 
+  const inputClass = projectAssetTheme.formInput;
+
   return (
     <Modal
       title={editing ? tt.modalEditTitle : tt.modalAddTitle}
@@ -86,11 +89,12 @@ export function ProjectFormModal({
       cancelText={tt.modalCancel}
       width={640}
       destroyOnClose
+      className={projectAssetTheme.formModal}
     >
       <Form
         form={form}
         layout="vertical"
-        className="mt-2"
+        className={`${projectAssetTheme.formRoot} mt-2`}
         onFinish={(values) => onSubmit(formValuesToUpsert(values))}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
@@ -99,35 +103,38 @@ export function ProjectFormModal({
             label={tt.formName}
             rules={[{ required: true, message: tt.formRequired }]}
           >
-            <Input />
+            <Input className={inputClass} />
           </Form.Item>
           <Form.Item
             name="author"
             label={tt.formAuthor}
             rules={[{ required: true, message: tt.formRequired }]}
           >
-            <Input />
+            <Input className={inputClass} />
           </Form.Item>
         </div>
         <Form.Item name="description" label={tt.formDescription}>
-          <Input.TextArea rows={2} />
+          <Input.TextArea rows={2} className={inputClass} />
         </Form.Item>
         <Form.Item name="otherInfo" label={tt.formOtherInfo}>
-          <Input />
+          <Input className={inputClass} />
         </Form.Item>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
           <Form.Item name="repoUrl" label={tt.formRepoUrl}>
-            <Input placeholder="https://..." />
+            <Input className={inputClass} placeholder="https://..." />
           </Form.Item>
           <Form.Item name="testUrl" label={tt.formTestUrl}>
-            <Input placeholder="https://test..." />
+            <Input className={inputClass} placeholder="https://test..." />
           </Form.Item>
         </div>
         <Form.Item name="prodUrl" label={tt.formProdUrl}>
-          <Input placeholder="https://..." />
+          <Input className={inputClass} placeholder="https://..." />
         </Form.Item>
         <Form.Item name="tagsText" label={tt.formTags}>
-          <Input placeholder={tt.formTagsPlaceholder} />
+          <Input
+            className={inputClass}
+            placeholder={tt.formTagsPlaceholder}
+          />
         </Form.Item>
       </Form>
     </Modal>

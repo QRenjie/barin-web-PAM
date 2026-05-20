@@ -42,5 +42,11 @@ export const projectAssetTheme = {
   crudBtn:
     'p-1.5 bg-secondary border border-c-border rounded-full shadow-sm hover:bg-elevated transition',
   crudBtnCompact:
-    'p-1 bg-secondary border border-c-border rounded-full shadow-sm hover:bg-elevated transition'
+    'p-1 bg-secondary border border-c-border rounded-full shadow-sm hover:bg-elevated transition',
+
+  /** Ant Design Input/TextArea — aligned with LoginForm */
+  formInput:
+    'border-primary-border text-primary-text placeholder:text-tertiary-text focus:border-brand focus:ring-brand/30 bg-bg-container outline-none transition-colors focus:ring-2 focus:ring-offset-0',
+  formModal: 'project-asset-modal',
+  formRoot: 'project-asset-form'
 } as const;

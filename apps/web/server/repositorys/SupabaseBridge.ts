@@ -100,6 +100,9 @@ export class SupabaseBridge implements DBBridgeInterface {
       created_at: user.created_at,
       updated_at: user.updated_at,
       role: user.role === 'admin' ? UserRole.ADMIN : UserRole.USER,
+      email_confirmed_at: user.email_confirmed_at
+        ? Date.parse(user.email_confirmed_at)
+        : null,
       // 始终为空
       password: '',
       credential_token: ''
