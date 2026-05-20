@@ -1,6 +1,7 @@
 import { API_PROJECTS } from '@config/apiRoutes';
 import { NextApiServer } from '@server/NextApiServer';
 import { ProjectsController } from '@server/controllers/ProjectsController';
+import { ServerAuthPlugin } from '@server/plugins/ServerAuthPlugin';
 import type { NextRequest } from 'next/server';
 
 /**
@@ -10,15 +11,22 @@ import type { NextRequest } from 'next/server';
  *     tags:
  *       - Projects
  *     summary: List project assets
- *     description: |
- *       Public catalog of company projects (repo, test/prod URLs, owner, tags).
- *       Data is stored in Supabase table `projects` with public SELECT RLS.
- *     responses:
- *       200:
- *         description: Success envelope; `data` is ProjectAsset[].
+ *   post:
+ *     tags:
+ *       - Projects
+ *     summary: Create project (requires auth)
  */
 export async function GET(req: NextRequest) {
   return new NextApiServer(API_PROJECTS, req).runWithJson(
     async ({ parameters: { IOC } }) => IOC(ProjectsController).list()
   );
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  return new NextApiServer(API_PROJECTS, req)
+    .use(new ServerAuthPlugin())
+    .runWithJson(async ({ parameters: { IOC } }) =>
+      IOC(ProjectsController).create(body)
+    );
 }

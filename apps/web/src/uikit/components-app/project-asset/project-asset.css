@@ -18,9 +18,76 @@
 }
 
 .project-asset-compact:active {
-  background-color: rgb(243 244 246);
+  background-color: rgb(var(--fe-color-elevated));
 }
 
-[data-theme='dark'] .project-asset-compact:active {
-  background-color: rgb(31 41 55);
+/* Surfaces */
+.project-asset-surface {
+  background-color: rgb(var(--fe-color-secondary) / 0.85);
+  border: 1px solid rgb(var(--fe-color-primary-border) / 0.6);
+}
+
+.project-asset-card-root {
+  background-color: rgb(var(--fe-color-secondary));
+  border: 1px solid rgb(var(--fe-color-primary-border) / 0.6);
+}
+
+.project-asset-muted-box {
+  background-color: rgb(var(--fe-color-primary-text) / 0.04);
+  border: 1px solid rgb(var(--fe-color-primary-border) / 0.35);
+}
+
+/* Env link chips — theme-aware semantic tints */
+.project-asset-link-repo {
+  color: rgb(var(--fe-color-brand));
+  background-color: rgba(var(--fe-color-brand), 0.1);
+}
+
+.project-asset-link-repo:hover {
+  color: rgb(var(--fe-color-brand-hover));
+  background-color: rgba(var(--fe-color-brand), 0.16);
+}
+
+.project-asset-link-test {
+  color: rgb(var(--fe-color-secondary-text));
+  background-color: rgb(var(--fe-color-primary-text) / 0.06);
+}
+
+.project-asset-link-test:hover {
+  color: rgb(var(--fe-color-primary-text));
+  background-color: rgb(var(--fe-color-primary-text) / 0.1);
+}
+
+.project-asset-link-prod {
+  color: rgb(var(--fe-color-brand));
+  background-color: rgba(var(--fe-color-brand), 0.14);
+}
+
+.project-asset-link-prod:hover {
+  color: rgb(var(--fe-color-brand-hover));
+  background-color: rgba(var(--fe-color-brand), 0.22);
+}
+
+.project-asset-env-box-test {
+  background-color: rgb(var(--fe-color-primary-text) / 0.04);
+  border: 1px solid rgb(var(--fe-color-primary-border) / 0.4);
+}
+
+.project-asset-env-box-prod {
+  background-color: rgba(var(--fe-color-brand), 0.06);
+  border: 1px solid rgba(var(--fe-color-brand), 0.2);
+}
+
+.project-asset-btn-chip {
+  color: rgb(var(--fe-color-brand));
+  background-color: rgba(var(--fe-color-brand), 0.1);
+}
+
+.project-asset-btn-chip:hover {
+  background-color: rgba(var(--fe-color-brand), 0.18);
+}
+
+.project-asset-btn-chip-muted {
+  color: rgb(var(--fe-color-tertiary-text));
+  background-color: rgb(var(--fe-color-elevated));
 }

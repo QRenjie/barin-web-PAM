@@ -1,12 +1,24 @@
 'use client';
 
+import { Button, Modal, message } from 'antd';
 import { useCallback, useMemo, useState } from 'react';
 import { usePageI18nMapping } from '@/uikit/context/PageI18nContext';
+import { useUserAuth } from '@/uikit/hook/useUserAuth';
 import type { HomeI18nInterface } from '@config/i18n-mapping/HomeI18n';
 import type { ProjectAsset } from '@interfaces/ProjectAsset';
+import type { ProjectUpsertInput } from '@schemas/ProjectSchema';
+import { ROUTE_LOGIN } from '@config/route';
+import { useLocale } from 'next-intl';
 import { ProjectCompactItem } from './ProjectCompactItem';
 import { ProjectDetailCard } from './ProjectDetailCard';
+import { ProjectFormModal } from './ProjectFormModal';
+import {
+  createProject,
+  deleteProject,
+  updateProject
+} from './projectsClient';
 import { filterProjects } from './projectAssetUtils';
+import { projectAssetTheme } from './projectAssetTheme';
 import './project-asset.css';
 
 type ViewMode = 'card' | 'compact';
@@ -51,6 +63,24 @@ function ListIcon({ className }: { className?: string }) {
   );
 }
 
+function PlusIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M12 4v16m8-8H4"
+      />
+    </svg>
+  );
+}
+
 function SearchIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -89,90 +119,180 @@ function EmptyIcon({ className }: { className?: string }) {
   );
 }
 
-const viewBtnActive =
-  'bg-emerald-50 text-emerald-700 shadow-sm dark:bg-emerald-950/50 dark:text-emerald-400';
-const viewBtnInactive =
-  'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800';
-
-export function ProjectAssetCenter({ projects }: ProjectAssetCenterProps) {
+export function ProjectAssetCenter({
+  projects: initialProjects
+}: ProjectAssetCenterProps) {
   const tt = usePageI18nMapping<HomeI18nInterface>();
+  const locale = useLocale();
+  const { user, loading: authLoading } = useUserAuth();
+  const canManage = !authLoading && !!user;
+
+  const [projects, setProjects] = useState(initialProjects);
   const [view, setView] = useState<ViewMode>('card');
   const [search, setSearch] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState<ProjectAsset | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const filtered = useMemo(
     () => filterProjects(projects, search),
     [projects, search]
   );
 
+  const isCatalogEmpty = projects.length === 0;
+  const isFilterEmpty = !isCatalogEmpty && filtered.length === 0;
+
   const resetSearch = useCallback(() => setSearch(''), []);
 
+  const requireAuth = useCallback(() => {
+    message.warning(tt.crudLoginRequired);
+    window.location.href = `/${locale}${ROUTE_LOGIN}`;
+  }, [locale, message, tt.crudLoginRequired]);
+
+  const openAdd = useCallback(() => {
+    if (!canManage) {
+      requireAuth();
+      return;
+    }
+    setEditing(null);
+    setModalOpen(true);
+  }, [canManage, requireAuth]);
+
+  const openEdit = useCallback(
+    (id: number) => {
+      if (!canManage) {
+        requireAuth();
+        return;
+      }
+      const project = projects.find((p) => p.id === id);
+      if (project) {
+        setEditing(project);
+        setModalOpen(true);
+      }
+    },
+    [canManage, projects, requireAuth]
+  );
+
+  const handleDelete = useCallback(
+    (id: number) => {
+      if (!canManage) {
+        requireAuth();
+        return;
+      }
+      Modal.confirm({
+        title: tt.confirmDelete,
+        okType: 'danger',
+        onOk: async () => {
+          try {
+            await deleteProject(id);
+            setProjects((prev) => prev.filter((p) => p.id !== id));
+          } catch {
+            message.error(tt.operationFailed);
+          }
+        }
+      });
+    },
+    [canManage, message, requireAuth, tt]
+  );
+
+  const handleSubmit = useCallback(
+    async (input: ProjectUpsertInput) => {
+      setSaving(true);
+      try {
+        if (editing) {
+          const updated = await updateProject(editing.id, input);
+          setProjects((prev) =>
+            prev.map((p) => (p.id === updated.id ? updated : p))
+          );
+        } else {
+          const created = await createProject(input);
+          setProjects((prev) => [...prev, created]);
+        }
+        setModalOpen(false);
+        setEditing(null);
+        message.success(tt.modalSave);
+      } catch {
+        message.error(tt.operationFailed);
+      } finally {
+        setSaving(false);
+      }
+    },
+    [editing, message, tt]
+  );
+
+  const crudProps = canManage
+    ? { canManage: true as const, onEdit: openEdit, onDelete: handleDelete }
+    : {};
+
   return (
-    <div
-      data-testid="ProjectAssetCenter"
-      className="bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-slate-900/50"
-    >
+    <div data-testid="ProjectAssetCenter" className={projectAssetTheme.page}>
       <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 py-5 md:py-10">
         <div className="mb-6 md:mb-8 flex flex-col items-start gap-4 md:flex-row md:justify-between md:items-end">
           <div className="w-full">
-            <div className="inline-flex items-center gap-2 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm border border-gray-200/80 dark:border-gray-700 mb-3">
+            <div className={projectAssetTheme.badge}>
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand" />
               </span>
-              <span className="text-[11px] md:text-xs font-medium text-gray-600 dark:text-gray-400 tracking-wide">
-                {tt.assetBadge}
-              </span>
+              <span className={projectAssetTheme.badgeText}>{tt.assetBadge}</span>
             </div>
-            <h1 className="text-2xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-200 dark:to-slate-400">
-              {tt.assetHeading}
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 max-w-xl text-xs md:text-sm">
-              {tt.description}
-            </p>
+            <h1 className={projectAssetTheme.heading}>{tt.assetHeading}</h1>
+            <p className={projectAssetTheme.subtitle}>{tt.description}</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-            <div className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm rounded-2xl px-4 py-1.5 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-3">
+            <div className={projectAssetTheme.statPanel}>
               <div className="text-left">
-                <div className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-medium">
-                  {tt.totalCount}
-                </div>
-                <div className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-100">
-                  {projects.length}
-                </div>
+                <div className={projectAssetTheme.statLabel}>{tt.totalCount}</div>
+                <div className={projectAssetTheme.statValue}>{projects.length}</div>
               </div>
-              <div className="h-6 w-px bg-gray-200 dark:bg-gray-700" />
+              <div className={projectAssetTheme.statDivider} />
               <div className="text-left">
-                <div className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-medium">
+                <div className={projectAssetTheme.statLabel}>
                   {tt.filteredCount}
                 </div>
-                <div className="text-xl md:text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                <div className={projectAssetTheme.statValueAccent}>
                   {filtered.length}
                 </div>
               </div>
             </div>
 
-            <div className="flex bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl border border-gray-200 dark:border-gray-700 p-0.5 shadow-sm">
-              <button
-                type="button"
-                onClick={() => setView('card')}
-                className={`flex items-center gap-1 px-3 py-1.5 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 ${
-                  view === 'card' ? viewBtnActive : viewBtnInactive
-                }`}
+            <div className="flex gap-2">
+              <div className={projectAssetTheme.viewToggleWrap}>
+                <button
+                  type="button"
+                  onClick={() => setView('card')}
+                  className={`${projectAssetTheme.viewBtnBase} ${
+                    view === 'card'
+                      ? projectAssetTheme.viewBtnActive
+                      : projectAssetTheme.viewBtnInactive
+                  }`}
+                >
+                  <GridIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <span>{tt.viewCard}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setView('compact')}
+                  className={`${projectAssetTheme.viewBtnBase} ${
+                    view === 'compact'
+                      ? projectAssetTheme.viewBtnActive
+                      : projectAssetTheme.viewBtnInactive
+                  }`}
+                >
+                  <ListIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <span>{tt.viewCompact}</span>
+                </button>
+              </div>
+              <Button
+                type="primary"
+                data-testid="AddProjectBtn"
+                onClick={openAdd}
+                className="flex items-center gap-1 !rounded-xl"
+                icon={<PlusIcon className="w-4 h-4" />}
               >
-                <GridIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{tt.viewCard}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setView('compact')}
-                className={`flex items-center gap-1 px-3 py-1.5 text-xs md:text-sm font-medium rounded-lg transition-all duration-200 ${
-                  view === 'compact' ? viewBtnActive : viewBtnInactive
-                }`}
-              >
-                <ListIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                <span>{tt.viewCompact}</span>
-              </button>
+                <span className="hidden min-[480px]:inline">{tt.addProject}</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -180,40 +300,46 @@ export function ProjectAssetCenter({ projects }: ProjectAssetCenterProps) {
         <div className="mb-5 flex flex-col sm:flex-row gap-2 items-stretch sm:items-center justify-between">
           <div className="relative flex-1 w-full">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <SearchIcon className="h-4 w-4 text-gray-400" />
+              <SearchIcon className="h-4 w-4 text-tertiary-text" />
             </div>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={tt.searchPlaceholder}
-              className="block w-full pl-9 pr-3 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white/90 dark:bg-gray-900/90 shadow-sm focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 transition-all text-sm text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+              className={projectAssetTheme.searchInput}
             />
           </div>
-          <div className="text-[11px] text-gray-400 bg-white/50 dark:bg-gray-900/50 px-3 py-1.5 rounded-full inline-flex items-center justify-center gap-1 whitespace-nowrap">
+          <div className={projectAssetTheme.searchHint}>
             <span>{tt.searchHint}</span>
           </div>
         </div>
 
-        {filtered.length === 0 ? (
-          <div
-            data-testid="ProjectAssetEmpty"
-            className="text-center py-12 flex flex-col items-center justify-center bg-white/40 dark:bg-gray-900/40 rounded-2xl backdrop-blur-sm"
-          >
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-3 mb-2">
-              <EmptyIcon className="h-8 w-8 text-gray-400" />
+        {isCatalogEmpty || isFilterEmpty ? (
+          <div data-testid="ProjectAssetEmpty" className={projectAssetTheme.emptyPanel}>
+            <div className={projectAssetTheme.emptyIconWrap}>
+              <EmptyIcon className={projectAssetTheme.emptyIcon} />
             </div>
-            <p className="text-gray-500 dark:text-gray-400 font-medium">
-              {tt.emptyTitle}
+            <p className={projectAssetTheme.emptyTitle}>
+              {isCatalogEmpty ? tt.emptyCatalogTitle : tt.emptyTitle}
             </p>
-            <p className="text-gray-400 text-xs mt-1">{tt.emptyDesc}</p>
-            <button
-              type="button"
-              onClick={resetSearch}
-              className="mt-3 text-sm bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400 px-4 py-1.5 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-950/70 transition"
-            >
-              {tt.clearFilter}
-            </button>
+            <p className={projectAssetTheme.emptyDesc}>
+              {isCatalogEmpty ? tt.emptyCatalogDesc : tt.emptyDesc}
+            </p>
+            {isFilterEmpty && (
+              <button
+                type="button"
+                onClick={resetSearch}
+                className={projectAssetTheme.clearFilterBtn}
+              >
+                {tt.clearFilter}
+              </button>
+            )}
+            {isCatalogEmpty && canManage && (
+              <Button type="primary" onClick={openAdd} className="mt-3 !rounded-full">
+                {tt.addProject}
+              </Button>
+            )}
           </div>
         ) : view === 'card' ? (
           <div
@@ -222,29 +348,36 @@ export function ProjectAssetCenter({ projects }: ProjectAssetCenterProps) {
           >
             {filtered.map((project) => (
               <div key={project.id} className="project-asset-fade-in">
-                <ProjectDetailCard project={project} tt={tt} />
+                <ProjectDetailCard project={project} tt={tt} {...crudProps} />
               </div>
             ))}
           </div>
         ) : (
-          <div
-            data-testid="ProjectAssetCompactList"
-            className="space-y-3"
-          >
+          <div data-testid="ProjectAssetCompactList" className="space-y-3">
             {filtered.map((project) => (
               <div key={project.id} className="project-asset-fade-in">
-                <ProjectCompactItem project={project} tt={tt} />
+                <ProjectCompactItem project={project} tt={tt} {...crudProps} />
               </div>
             ))}
           </div>
         )}
 
-        <footer className="mt-12 pt-5 border-t border-gray-200/60 dark:border-gray-700/60 text-center text-[10px] md:text-xs text-gray-400 flex flex-wrap justify-center gap-x-4 gap-y-1">
-          <span>{tt.footer1}</span>
-          <span>{tt.footer2}</span>
-          <span>{tt.footer3}</span>
+        <footer className={projectAssetTheme.footer}>
+          <span>{tt.footerCrud}</span>
         </footer>
       </div>
+
+      <ProjectFormModal
+        open={modalOpen}
+        editing={editing}
+        tt={tt}
+        saving={saving}
+        onCancel={() => {
+          setModalOpen(false);
+          setEditing(null);
+        }}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }

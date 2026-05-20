@@ -8,4 +8,5 @@ export type ProjectAsset = {
   otherInfo: string;
   description: string;
   tags?: string[];
+  sortOrder?: number;
 };

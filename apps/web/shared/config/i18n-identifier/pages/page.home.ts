@@ -7,8 +7,8 @@ export const PAGE_HOME_TITLE = 'page_home:title';
 
 /**
  * @description Home page description
- * @localZh 仓库地址 · 测试/正式环境 · 负责人信息 · 支持卡片/精简列表快速切换
- * @localEn Repository, test/prod environments, owners, card and compact list views
+ * @localZh 仓库地址 · 测试/正式环境 · 支持增删改查，数据保存在 Supabase
+ * @localEn Repository, test/prod URLs, full CRUD, data stored in Supabase
  */
 export const PAGE_HOME_DESCRIPTION = 'page_home:description';
 
@@ -57,8 +57,8 @@ export const PAGE_HOME_GET_STARTED_BUTTON = 'page_home:get_started__button';
 
 /**
  * @description Asset overview badge
- * @localZh 资产总览 · 双模视图
- * @localEn Asset overview · dual view
+ * @localZh 资产总览 · 双模视图 · 完整CRUD
+ * @localEn Asset overview · dual view · full CRUD
  */
 export const PAGE_HOME_ASSET_BADGE = 'page_home:asset_badge';
 
@@ -222,3 +222,164 @@ export const PAGE_HOME_FOOTER_2 = 'page_home:footer_2';
  * @localEn 📱 Mobile-friendly layout
  */
 export const PAGE_HOME_FOOTER_3 = 'page_home:footer_3';
+
+/**
+ * @description Add project button
+ * @localZh 新增项目
+ * @localEn Add project
+ */
+export const PAGE_HOME_ADD_PROJECT = 'page_home:add_project';
+
+/**
+ * @description Modal title for new project
+ * @localZh 新增项目
+ * @localEn Add project
+ */
+export const PAGE_HOME_MODAL_ADD_TITLE = 'page_home:modal_add_title';
+
+/**
+ * @description Modal title for edit project
+ * @localZh 编辑项目
+ * @localEn Edit project
+ */
+export const PAGE_HOME_MODAL_EDIT_TITLE = 'page_home:modal_edit_title';
+
+/**
+ * @description Modal save button
+ * @localZh 保存
+ * @localEn Save
+ */
+export const PAGE_HOME_MODAL_SAVE = 'page_home:modal_save';
+
+/**
+ * @description Modal cancel button
+ * @localZh 取消
+ * @localEn Cancel
+ */
+export const PAGE_HOME_MODAL_CANCEL = 'page_home:modal_cancel';
+
+/**
+ * @description Form project name label
+ * @localZh 项目名称
+ * @localEn Project name
+ */
+export const PAGE_HOME_FORM_NAME = 'page_home:form_name';
+
+/**
+ * @description Form author label
+ * @localZh 作者
+ * @localEn Author
+ */
+export const PAGE_HOME_FORM_AUTHOR = 'page_home:form_author';
+
+/**
+ * @description Form description label
+ * @localZh 描述
+ * @localEn Description
+ */
+export const PAGE_HOME_FORM_DESCRIPTION = 'page_home:form_description';
+
+/**
+ * @description Form other info label
+ * @localZh 其他信息 (技术栈/版本等)
+ * @localEn Other info (stack, version, etc.)
+ */
+export const PAGE_HOME_FORM_OTHER_INFO = 'page_home:form_other_info';
+
+/**
+ * @description Form repo URL label
+ * @localZh 仓库地址
+ * @localEn Repository URL
+ */
+export const PAGE_HOME_FORM_REPO_URL = 'page_home:form_repo_url';
+
+/**
+ * @description Form test URL label
+ * @localZh 测试环境URL
+ * @localEn Test environment URL
+ */
+export const PAGE_HOME_FORM_TEST_URL = 'page_home:form_test_url';
+
+/**
+ * @description Form prod URL label
+ * @localZh 正式环境URL
+ * @localEn Production URL
+ */
+export const PAGE_HOME_FORM_PROD_URL = 'page_home:form_prod_url';
+
+/**
+ * @description Form tags label
+ * @localZh 标签 (用逗号分隔)
+ * @localEn Tags (comma-separated)
+ */
+export const PAGE_HOME_FORM_TAGS = 'page_home:form_tags';
+
+/**
+ * @description Form tags placeholder
+ * @localZh 前端, 营销, 自动化
+ * @localEn frontend, marketing, automation
+ */
+export const PAGE_HOME_FORM_TAGS_PLACEHOLDER = 'page_home:form_tags_placeholder';
+
+/**
+ * @description Form required field message
+ * @localZh 请填写此字段
+ * @localEn This field is required
+ */
+export const PAGE_HOME_FORM_REQUIRED = 'page_home:form_required';
+
+/**
+ * @description Edit action title
+ * @localZh 编辑
+ * @localEn Edit
+ */
+export const PAGE_HOME_ACTION_EDIT = 'page_home:action_edit';
+
+/**
+ * @description Delete action title
+ * @localZh 删除
+ * @localEn Delete
+ */
+export const PAGE_HOME_ACTION_DELETE = 'page_home:action_delete';
+
+/**
+ * @description Delete confirmation
+ * @localZh 确定要删除该项目吗？
+ * @localEn Delete this project?
+ */
+export const PAGE_HOME_CONFIRM_DELETE = 'page_home:confirm_delete';
+
+/**
+ * @description Login required for CRUD
+ * @localZh 请先登录后再新增或编辑项目
+ * @localEn Sign in to add or edit projects
+ */
+export const PAGE_HOME_CRUD_LOGIN_REQUIRED = 'page_home:crud_login_required';
+
+/**
+ * @description Empty catalog (no projects yet)
+ * @localZh 暂无项目
+ * @localEn No projects yet
+ */
+export const PAGE_HOME_EMPTY_CATALOG_TITLE = 'page_home:empty_catalog_title';
+
+/**
+ * @description Empty catalog hint
+ * @localZh 登录后点击「新增项目」添加第一条记录
+ * @localEn Sign in and use Add project to create the first entry
+ */
+export const PAGE_HOME_EMPTY_CATALOG_DESC = 'page_home:empty_catalog_desc';
+
+/**
+ * @description Operation failed
+ * @localZh 操作失败，请稍后重试
+ * @localEn Operation failed, please try again
+ */
+export const PAGE_HOME_OPERATION_FAILED = 'page_home:operation_failed';
+
+/**
+ * @description Footer CRUD hint
+ * @localZh 📁 完整CURD · 数据保存至 Supabase
+ * @localEn 📁 Full CRUD · data stored in Supabase
+ */
+export const PAGE_HOME_FOOTER_CRUD = 'page_home:footer_crud';

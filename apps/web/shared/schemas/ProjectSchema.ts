@@ -1,5 +1,26 @@
 import { z } from 'zod';
 
+const optionalUrl = z
+  .string()
+  .trim()
+  .optional()
+  .refine((v) => !v || /^https?:\/\/.+/i.test(v), {
+    message: 'URL must start with http:// or https://'
+  });
+
+export const projectUpsertSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required'),
+  author: z.string().trim().min(1, 'Author is required'),
+  description: z.string().trim().optional().default(''),
+  otherInfo: z.string().trim().optional().default(''),
+  repoUrl: optionalUrl,
+  testUrl: optionalUrl,
+  prodUrl: optionalUrl,
+  tags: z.array(z.string().trim().min(1)).optional().default([])
+});
+
+export type ProjectUpsertInput = z.infer<typeof projectUpsertSchema>;
+
 export const projectRowSchema = z.object({
   id: z.number(),
   name: z.string(),
