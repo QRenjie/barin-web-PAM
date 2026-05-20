@@ -1,0 +1,142 @@
+@keyframes projectAssetFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.project-asset-fade-in {
+  animation: projectAssetFadeIn 0.25s ease-out;
+}
+
+.project-asset-card:active {
+  transform: scale(0.98);
+}
+
+.project-asset-compact:active {
+  background-color: rgb(var(--fe-color-elevated));
+}
+
+/* Surfaces */
+.project-asset-surface {
+  background-color: rgb(var(--fe-color-secondary) / 0.85);
+  border: 1px solid rgb(var(--fe-color-primary-border) / 0.6);
+}
+
+.project-asset-card-root {
+  background-color: rgb(var(--fe-color-secondary));
+  border: 1px solid rgb(var(--fe-color-primary-border) / 0.6);
+}
+
+.project-asset-muted-box {
+  background-color: rgb(var(--fe-color-primary-text) / 0.04);
+  border: 1px solid rgb(var(--fe-color-primary-border) / 0.35);
+}
+
+/* Env link chips — theme-aware semantic tints */
+.project-asset-link-repo {
+  color: rgb(var(--fe-color-brand));
+  background-color: rgba(var(--fe-color-brand), 0.1);
+}
+
+.project-asset-link-repo:hover {
+  color: rgb(var(--fe-color-brand-hover));
+  background-color: rgba(var(--fe-color-brand), 0.16);
+}
+
+.project-asset-link-test {
+  color: rgb(var(--fe-color-secondary-text));
+  background-color: rgb(var(--fe-color-primary-text) / 0.06);
+}
+
+.project-asset-link-test:hover {
+  color: rgb(var(--fe-color-primary-text));
+  background-color: rgb(var(--fe-color-primary-text) / 0.1);
+}
+
+.project-asset-link-prod {
+  color: rgb(var(--fe-color-brand));
+  background-color: rgba(var(--fe-color-brand), 0.14);
+}
+
+.project-asset-link-prod:hover {
+  color: rgb(var(--fe-color-brand-hover));
+  background-color: rgba(var(--fe-color-brand), 0.22);
+}
+
+.project-asset-env-box-test {
+  background-color: rgb(var(--fe-color-primary-text) / 0.04);
+  border: 1px solid rgb(var(--fe-color-primary-border) / 0.4);
+}
+
+.project-asset-env-box-prod {
+  background-color: rgba(var(--fe-color-brand), 0.06);
+  border: 1px solid rgba(var(--fe-color-brand), 0.2);
+}
+
+.project-asset-btn-chip {
+  color: rgb(var(--fe-color-brand));
+  background-color: rgba(var(--fe-color-brand), 0.1);
+}
+
+.project-asset-btn-chip:hover {
+  background-color: rgba(var(--fe-color-brand), 0.18);
+}
+
+.project-asset-btn-chip-muted {
+  color: rgb(var(--fe-color-tertiary-text));
+  background-color: rgb(var(--fe-color-elevated));
+}
+
+/* Project form modal — label, input text, placeholder */
+.project-asset-modal .ant-modal-close {
+  color: rgb(var(--fe-color-primary-text) / 0.55);
+}
+
+.project-asset-modal .ant-modal-close:hover {
+  color: rgb(var(--fe-color-primary-text) / 0.88);
+}
+
+.project-asset-form .ant-form-item-label > label,
+.project-asset-form .ant-form-item .ant-form-item-label > label {
+  color: rgb(var(--fe-color-primary-text) / 0.88) !important;
+}
+
+.project-asset-form .ant-form-item-required::before {
+  color: var(--fe-color-error) !important;
+}
+
+.project-asset-form .ant-input,
+.project-asset-form .ant-input-affix-wrapper,
+.project-asset-form textarea.ant-input {
+  color: var(--fe-color-text) !important;
+  background-color: var(--fe-color-bg-container) !important;
+  border-color: rgb(var(--fe-color-primary-border)) !important;
+}
+
+.project-asset-form .ant-input::placeholder,
+.project-asset-form textarea.ant-input::placeholder {
+  color: rgb(var(--fe-color-primary-text) / 0.35) !important;
+}
+
+.project-asset-form .ant-input:hover,
+.project-asset-form .ant-input-affix-wrapper:hover,
+.project-asset-form textarea.ant-input:hover {
+  border-color: var(--fe-color-primary-hover) !important;
+}
+
+.project-asset-form .ant-input:focus,
+.project-asset-form .ant-input-focused,
+.project-asset-form .ant-input-affix-wrapper-focused,
+.project-asset-form textarea.ant-input:focus {
+  border-color: var(--fe-color-primary-active) !important;
+  box-shadow: 0 0 0 2px var(--fe-color-primary-bg) !important;
+}
+
+.project-asset-form .ant-form-item-explain-error {
+  color: var(--fe-color-error) !important;
+}

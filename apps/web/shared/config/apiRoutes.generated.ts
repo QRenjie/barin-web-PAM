@@ -51,15 +51,6 @@ export const API_OPENAPI = '/api/openapi' as const;
 export const API_PROJECTS = '/api/projects' as const;
 
 /**
- * API path: `/api/projects/:id`
- *
- * @see [src/app/api/projects/[id]/route.ts](../../src/app/api/projects/[id]/route.ts)
- *
- * **Fallback:** Ctrl/Cmd+P (Quick Open) → `src/app/api/projects/[id]/route.ts`
- */
-export const API_PROJECTS_2 = '/api/projects/:id' as const;
-
-/**
  * API path: `/api/reference`
  *
  * @see [src/app/api/reference/route.ts](../../src/app/api/reference/route.ts)
@@ -119,7 +110,6 @@ export type ApiRoutePath =
   | typeof API_LOCALES_JSON
   | typeof API_OPENAPI
   | typeof API_PROJECTS
-  | typeof API_PROJECTS_2
   | typeof API_REFERENCE
   | typeof API_USER_LOGIN
   | typeof API_USER_LOGOUT
