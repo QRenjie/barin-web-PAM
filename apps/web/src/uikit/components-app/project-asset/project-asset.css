@@ -1,0 +1,26 @@
+@keyframes projectAssetFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.project-asset-fade-in {
+  animation: projectAssetFadeIn 0.25s ease-out;
+}
+
+.project-asset-card:active {
+  transform: scale(0.98);
+}
+
+.project-asset-compact:active {
+  background-color: rgb(243 244 246);
+}
+
+[data-theme='dark'] .project-asset-compact:active {
+  background-color: rgb(31 41 55);
+}
