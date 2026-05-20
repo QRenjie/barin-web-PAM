@@ -2,7 +2,7 @@
   "name": "barin-web-pam",
   "private": true,
   "scripts": {
-    "dev": "turbo dev",
+    "start:web": "pnpm --filter=@barin-web-pam/web dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck"
