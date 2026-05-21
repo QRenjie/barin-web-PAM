@@ -1,12 +1,12 @@
 import type { HomeI18nInterface } from '@config/i18n-mapping/HomeI18n';
 import type { ProjectAsset } from '@interfaces/ProjectAsset';
-import { ProjectCrudActions } from './ProjectCrudActions';
+import { hasContent } from './projectAssetDisplayUtils';
 import { projectAssetTheme } from './projectAssetTheme';
+import { ProjectCrudActions } from './ProjectCrudActions';
 
 type ProjectCompactItemProps = {
   project: ProjectAsset;
   tt: HomeI18nInterface;
-  canManage?: boolean;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
 };
@@ -14,6 +14,7 @@ type ProjectCompactItemProps = {
 function CodeIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="CodeIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -32,6 +33,7 @@ function CodeIcon({ className }: { className?: string }) {
 function UserIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="UserIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -47,9 +49,10 @@ function UserIcon({ className }: { className?: string }) {
   );
 }
 
-function CheckCircleIcon({ className }: { className?: string }) {
+function LinkIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="LinkIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -59,99 +62,36 @@ function CheckCircleIcon({ className }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={1.8}
-        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
       />
     </svg>
   );
 }
 
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.8}
-        d="M5 13l4 4L19 7"
-      />
-    </svg>
-  );
-}
-
-const btnChip =
-  'flex items-center justify-center gap-1 md:gap-1.5 py-1.5 rounded-lg text-xs md:text-sm transition w-full';
+const linkPill =
+  'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition min-w-0 max-w-full';
 
 export function ProjectCompactItem({
   project,
   tt,
-  canManage,
   onEdit,
   onDelete
 }: ProjectCompactItemProps) {
-  const shortInfo =
-    project.otherInfo.length > 60
-      ? `${project.otherInfo.substring(0, 60)}…`
-      : project.otherInfo;
-
-  const repoButton = project.repoUrl ? (
-    <a
-      href={project.repoUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`${btnChip} project-asset-btn-chip`}
-    >
-      <CodeIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-      <span className="hidden sm:inline">{tt.btnRepo}</span>
-    </a>
-  ) : (
-    <span className={`${btnChip} project-asset-btn-chip-muted`}>
-      <CodeIcon className="w-3.5 h-3.5" />
-      <span className="hidden sm:inline">{tt.noRepo}</span>
-    </span>
-  );
-
-  const testButton = project.testUrl ? (
-    <a
-      href={project.testUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`${btnChip} project-asset-link-test`}
-    >
-      <CheckCircleIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-      <span className="hidden sm:inline">{tt.btnTest}</span>
-    </a>
-  ) : (
-    <span className={`${btnChip} project-asset-btn-chip-muted`}>
-      <CheckCircleIcon className="w-3.5 h-3.5" />
-      <span className="hidden sm:inline">{tt.noTest}</span>
-    </span>
-  );
-
-  const prodButton = project.prodUrl ? (
-    <a
-      href={project.prodUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`${btnChip} project-asset-btn-chip`}
-    >
-      <CheckIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-      <span className="hidden sm:inline">{tt.btnProd}</span>
-    </a>
-  ) : (
-    <span className={`${btnChip} project-asset-btn-chip-muted`}>
-      <CheckIcon className="w-3.5 h-3.5" />
-      <span className="hidden sm:inline">{tt.notConfigured}</span>
-    </span>
-  );
+  const environments = project.environments ?? [];
+  const hasRepo = hasContent(project.repoUrl);
+  const hasEnvs = environments.length > 0;
+  const hasLinks = hasRepo || hasEnvs;
+  const hasDescription = hasContent(project.description);
+  const hasOtherInfo = hasContent(project.otherInfo);
+  const hasTags = (project.tags?.length ?? 0) > 0;
+  const metaLine = hasDescription || hasOtherInfo || hasTags;
 
   return (
-    <div className="project-asset-compact project-asset-card-root relative backdrop-blur-sm rounded-xl shadow-sm p-3 md:p-4 transition">
-      {canManage && onEdit && onDelete && (
+    <div
+      data-testid="ProjectCompactItem"
+      className="project-asset-compact project-asset-card-root relative backdrop-blur-sm rounded-xl shadow-sm p-3 md:px-4 md:py-3.5 transition"
+    >
+      {onEdit && onDelete && (
         <ProjectCrudActions
           projectId={project.id}
           onEdit={onEdit}
@@ -161,43 +101,81 @@ export function ProjectCompactItem({
           compact
         />
       )}
-      <div className="flex flex-col gap-2 pr-14">
-        <div className="flex flex-wrap items-baseline justify-between gap-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-sm md:text-base font-bold text-primary-text">
+
+      <div className="flex flex-col gap-2 pr-12 md:pr-14 min-w-0">
+        <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <h3 className="text-sm md:text-base font-bold text-primary-text truncate">
               {project.name}
             </h3>
-            <span className={projectAssetTheme.idBadge}>#{project.id}</span>
-          </div>
-          <div className="flex items-center gap-1 text-xs text-secondary-text">
-            <UserIcon className="w-3 h-3" />
-            <span>{project.author}</span>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-1 mt-0 sm:hidden">
-          {project.tags?.slice(0, 2).map((t) => (
-            <span key={t} className={projectAssetTheme.tagSm}>
-              {t}
+            <span className={`${projectAssetTheme.idBadge} shrink-0`}>
+              #{project.id}
             </span>
-          ))}
-          <span className="text-[10px] text-tertiary-text truncate">
-            {shortInfo}
-          </span>
+          </div>
+          <div className="flex items-center gap-1 text-xs text-secondary-text shrink-0">
+            <UserIcon className="w-3 h-3" />
+            <span className="max-w-32 truncate">{project.author}</span>
+          </div>
         </div>
 
-        <div className="hidden sm:block text-[11px] text-tertiary-text truncate">
-          📄{' '}
-          {project.description.length > 80
-            ? `${project.description.substring(0, 80)}…`
-            : project.description}
-        </div>
+        {metaLine && (
+          <div className="flex flex-col gap-1 min-w-0">
+            {hasDescription && (
+              <p className="text-[11px] md:text-xs text-tertiary-text line-clamp-2 leading-snug">
+                {project.description}
+              </p>
+            )}
+            {hasOtherInfo && (
+              <p className="text-[10px] text-tertiary-text/90 line-clamp-1">
+                {project.otherInfo}
+              </p>
+            )}
+            {hasTags && (
+              <div className="flex flex-wrap gap-1">
+                {project.tags!.map((t) => (
+                  <span
+                    data-testid="ProjectCompactItem"
+                    key={t}
+                    className={projectAssetTheme.tagSm}
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
-        <div className="grid grid-cols-3 gap-2 mt-1">
-          {repoButton}
-          {testButton}
-          {prodButton}
-        </div>
+        {hasLinks && (
+          <div className="project-asset-compact-links">
+            {hasRepo && (
+              <a
+                href={project.repoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${linkPill} project-asset-btn-chip`}
+                title={project.repoUrl}
+              >
+                <CodeIcon className="w-3.5 h-3.5 shrink-0" />
+                <span>{tt.btnRepo}</span>
+              </a>
+            )}
+            {environments.map((env) => (
+              <a
+                data-testid="ProjectCompactItem"
+                key={`${env.name}-${env.url}`}
+                href={env.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${linkPill} project-asset-link-test`}
+                title={env.url}
+              >
+                <LinkIcon className="w-3.5 h-3.5 shrink-0" />
+                <span className="uppercase tracking-wide">{env.name}</span>
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

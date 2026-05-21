@@ -1,8 +1,8 @@
 import { API_PROJECTS } from '@config/apiRoutes';
-import type { ProjectAsset } from '@interfaces/ProjectAsset';
 import type { ProjectUpsertInput } from '@schemas/ProjectSchema';
 import type { AppApiResult } from '@interfaces/AppApiInterface';
 import { isAppApiSuccessInterface } from '@interfaces/AppApiInterface';
+import type { ProjectAsset } from '@interfaces/ProjectAsset';
 
 async function parseEnvelope<T>(res: Response): Promise<T> {
   const json = (await res.json()) as AppApiResult<T>;

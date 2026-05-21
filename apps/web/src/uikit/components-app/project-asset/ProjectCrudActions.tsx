@@ -14,6 +14,7 @@ type ProjectCrudActionsProps = {
 function EditIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="EditIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -32,6 +33,7 @@ function EditIcon({ className }: { className?: string }) {
 function DeleteIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="DeleteIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -60,7 +62,10 @@ export function ProjectCrudActions({
     : projectAssetTheme.crudBtn;
 
   return (
-    <div className="absolute top-2 right-2 flex gap-1 z-10">
+    <div
+      data-testid="ProjectCrudActions"
+      className="absolute top-2 right-2 flex gap-1 z-10"
+    >
       <button
         type="button"
         title={editTitle}

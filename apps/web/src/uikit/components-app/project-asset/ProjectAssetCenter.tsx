@@ -1,24 +1,20 @@
 'use client';
 
 import { Button, Modal, message } from 'antd';
+import { useLocale } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
 import { usePageI18nMapping } from '@/uikit/context/PageI18nContext';
 import { useUserAuth } from '@/uikit/hook/useUserAuth';
 import type { HomeI18nInterface } from '@config/i18n-mapping/HomeI18n';
-import type { ProjectAsset } from '@interfaces/ProjectAsset';
-import type { ProjectUpsertInput } from '@schemas/ProjectSchema';
 import { ROUTE_LOGIN } from '@config/route';
-import { useLocale } from 'next-intl';
+import type { ProjectUpsertInput } from '@schemas/ProjectSchema';
+import type { ProjectAsset } from '@interfaces/ProjectAsset';
+import { projectAssetTheme } from './projectAssetTheme';
+import { filterProjects } from './projectAssetUtils';
 import { ProjectCompactItem } from './ProjectCompactItem';
 import { ProjectDetailCard } from './ProjectDetailCard';
 import { ProjectFormModal } from './ProjectFormModal';
-import {
-  createProject,
-  deleteProject,
-  updateProject
-} from './projectsClient';
-import { filterProjects } from './projectAssetUtils';
-import { projectAssetTheme } from './projectAssetTheme';
+import { createProject, deleteProject, updateProject } from './projectsClient';
 import './project-asset.css';
 
 type ViewMode = 'card' | 'compact';
@@ -30,6 +26,7 @@ export type ProjectAssetCenterProps = {
 function GridIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="GridIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -48,6 +45,7 @@ function GridIcon({ className }: { className?: string }) {
 function ListIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="ListIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -66,6 +64,7 @@ function ListIcon({ className }: { className?: string }) {
 function PlusIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="PlusIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -84,6 +83,7 @@ function PlusIcon({ className }: { className?: string }) {
 function SearchIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="SearchIcon"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -103,6 +103,7 @@ function SearchIcon({ className }: { className?: string }) {
 function EmptyIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="EmptyIcon"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -182,6 +183,7 @@ export function ProjectAssetCenter({
       Modal.confirm({
         title: tt.confirmDelete,
         okType: 'danger',
+        centered: true,
         onOk: async () => {
           try {
             await deleteProject(id);
@@ -220,13 +222,11 @@ export function ProjectAssetCenter({
     [editing, message, tt]
   );
 
-  const crudProps = canManage
-    ? { canManage: true as const, onEdit: openEdit, onDelete: handleDelete }
-    : {};
+  const crudProps = { onEdit: openEdit, onDelete: handleDelete };
 
   return (
     <div data-testid="ProjectAssetCenter" className={projectAssetTheme.page}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 py-5 md:py-10">
+      <div className="max-w-7xl mx-auto flex flex-1 flex-col w-full px-4 sm:px-5 lg:px-8 py-5 md:py-10">
         <div className="mb-6 md:mb-8 flex flex-col items-start gap-4 md:flex-row md:justify-between md:items-end">
           <div className="w-full">
             <div className={projectAssetTheme.badge}>
@@ -234,7 +234,9 @@ export function ProjectAssetCenter({
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-brand" />
               </span>
-              <span className={projectAssetTheme.badgeText}>{tt.assetBadge}</span>
+              <span className={projectAssetTheme.badgeText}>
+                {tt.assetBadge}
+              </span>
             </div>
             <h1 className={projectAssetTheme.heading}>{tt.assetHeading}</h1>
             <p className={projectAssetTheme.subtitle}>{tt.description}</p>
@@ -243,8 +245,12 @@ export function ProjectAssetCenter({
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
             <div className={projectAssetTheme.statPanel}>
               <div className="text-left">
-                <div className={projectAssetTheme.statLabel}>{tt.totalCount}</div>
-                <div className={projectAssetTheme.statValue}>{projects.length}</div>
+                <div className={projectAssetTheme.statLabel}>
+                  {tt.totalCount}
+                </div>
+                <div className={projectAssetTheme.statValue}>
+                  {projects.length}
+                </div>
               </div>
               <div className={projectAssetTheme.statDivider} />
               <div className="text-left">
@@ -291,7 +297,9 @@ export function ProjectAssetCenter({
                 className="flex items-center gap-1 !rounded-xl"
                 icon={<PlusIcon className="w-4 h-4" />}
               >
-                <span className="hidden min-[480px]:inline">{tt.addProject}</span>
+                <span className="hidden min-[480px]:inline">
+                  {tt.addProject}
+                </span>
               </Button>
             </div>
           </div>
@@ -316,7 +324,10 @@ export function ProjectAssetCenter({
         </div>
 
         {isCatalogEmpty || isFilterEmpty ? (
-          <div data-testid="ProjectAssetEmpty" className={projectAssetTheme.emptyPanel}>
+          <div
+            data-testid="ProjectAssetEmpty"
+            className={projectAssetTheme.emptyPanel}
+          >
             <div className={projectAssetTheme.emptyIconWrap}>
               <EmptyIcon className={projectAssetTheme.emptyIcon} />
             </div>
@@ -336,7 +347,11 @@ export function ProjectAssetCenter({
               </button>
             )}
             {isCatalogEmpty && canManage && (
-              <Button type="primary" onClick={openAdd} className="mt-3 !rounded-full">
+              <Button
+                type="primary"
+                onClick={openAdd}
+                className="mt-3 !rounded-full"
+              >
                 {tt.addProject}
               </Button>
             )}
@@ -344,10 +359,14 @@ export function ProjectAssetCenter({
         ) : view === 'card' ? (
           <div
             data-testid="ProjectAssetCards"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 auto-rows-fr"
+            className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 auto-rows-fr"
           >
             {filtered.map((project) => (
-              <div key={project.id} className="project-asset-fade-in">
+              <div
+                data-testid="ProjectAssetCenter"
+                key={project.id}
+                className="project-asset-fade-in min-w-0"
+              >
                 <ProjectDetailCard project={project} tt={tt} {...crudProps} />
               </div>
             ))}
@@ -355,7 +374,11 @@ export function ProjectAssetCenter({
         ) : (
           <div data-testid="ProjectAssetCompactList" className="space-y-3">
             {filtered.map((project) => (
-              <div key={project.id} className="project-asset-fade-in">
+              <div
+                data-testid="ProjectAssetCenter"
+                key={project.id}
+                className="project-asset-fade-in"
+              >
                 <ProjectCompactItem project={project} tt={tt} {...crudProps} />
               </div>
             ))}

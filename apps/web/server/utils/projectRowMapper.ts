@@ -1,9 +1,25 @@
-import type { ProjectAsset } from '@interfaces/ProjectAsset';
 import type { ProjectRow, ProjectUpsertInput } from '@schemas/ProjectSchema';
+import { projectEnvironmentSchema } from '@schemas/ProjectSchema';
+import type {
+  ProjectAsset,
+  ProjectEnvironment
+} from '@interfaces/ProjectAsset';
 
 function emptyToNull(value?: string): string | null {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
+}
+
+function parseEnvironments(raw: unknown): ProjectEnvironment[] {
+  if (!Array.isArray(raw)) return [];
+  const parsed: ProjectEnvironment[] = [];
+  for (const item of raw) {
+    const result = projectEnvironmentSchema.safeParse(item);
+    if (result.success) {
+      parsed.push(result.data);
+    }
+  }
+  return parsed;
 }
 
 export function projectUpsertToRow(
@@ -16,8 +32,7 @@ export function projectUpsertToRow(
     description: input.description ?? '',
     other_info: input.otherInfo ?? '',
     repo_url: emptyToNull(input.repoUrl),
-    test_url: emptyToNull(input.testUrl),
-    prod_url: emptyToNull(input.prodUrl),
+    environments: input.environments ?? [],
     tags: input.tags ?? []
   };
   if (sortOrder != null) {
@@ -31,8 +46,7 @@ export function projectRowToAsset(row: ProjectRow): ProjectAsset {
     id: row.id,
     name: row.name,
     repoUrl: row.repo_url ?? undefined,
-    testUrl: row.test_url ?? undefined,
-    prodUrl: row.prod_url ?? undefined,
+    environments: parseEnvironments(row.environments),
     author: row.author,
     otherInfo: row.other_info,
     description: row.description,

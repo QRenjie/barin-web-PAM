@@ -1,6 +1,6 @@
 import { API_PROJECTS } from '@config/apiRoutes';
-import { NextApiServer } from '@server/NextApiServer';
 import { ProjectsController } from '@server/controllers/ProjectsController';
+import { NextApiServer } from '@server/NextApiServer';
 import { ServerAuthPlugin } from '@server/plugins/ServerAuthPlugin';
 import type { NextRequest } from 'next/server';
 

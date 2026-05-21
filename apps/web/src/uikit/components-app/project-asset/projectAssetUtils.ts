@@ -1,19 +1,27 @@
 import type { ProjectAsset } from '@interfaces/ProjectAsset';
 
-export function formatShortUrl(url: string | undefined, maxLen = 35): string {
+/** host + path，无 maxLen 时不按字符截断，由容器 CSS 控制省略 */
+export function formatShortUrl(
+  url: string | undefined,
+  maxLen?: number
+): string {
   if (!url) return '';
   try {
     const urlObj = new URL(url);
-    let short =
+    const short =
       urlObj.hostname +
-      (urlObj.pathname !== '/' ? urlObj.pathname : '');
-    if (short.length > maxLen) {
-      short = `${short.substring(0, maxLen)}…`;
+      (urlObj.pathname !== '/' ? urlObj.pathname : '') +
+      (urlObj.search || '');
+    if (maxLen != null && short.length > maxLen) {
+      return `${short.substring(0, maxLen)}…`;
     }
     return short;
   } catch {
     const raw = url.replace(/^https?:\/\//, '');
-    return raw.length > maxLen ? `${raw.substring(0, maxLen)}…` : raw;
+    if (maxLen != null && raw.length > maxLen) {
+      return `${raw.substring(0, maxLen)}…`;
+    }
+    return raw;
   }
 }
 
@@ -31,7 +39,11 @@ export function filterProjects(
       p.otherInfo.toLowerCase().includes(lowerTerm) ||
       (p.tags?.some((t) => t.toLowerCase().includes(lowerTerm)) ?? false) ||
       (p.repoUrl?.toLowerCase().includes(lowerTerm) ?? false) ||
-      (p.prodUrl?.toLowerCase().includes(lowerTerm) ?? false) ||
-      (p.testUrl?.toLowerCase().includes(lowerTerm) ?? false)
+      (p.environments?.some(
+        (e) =>
+          e.name.toLowerCase().includes(lowerTerm) ||
+          e.url.toLowerCase().includes(lowerTerm)
+      ) ??
+        false)
   );
 }

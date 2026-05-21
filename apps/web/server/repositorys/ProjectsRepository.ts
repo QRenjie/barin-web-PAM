@@ -1,12 +1,12 @@
 import { inject, injectable } from '@shared/container';
 import { I } from '@config/ioc-identifiter';
-import type { ProjectAsset } from '@interfaces/ProjectAsset';
 import {
   PROJECT_LIST_FIELDS,
   projectRowSchema,
   type ProjectRow,
   type ProjectUpsertInput
 } from '@schemas/ProjectSchema';
+import type { ProjectAsset } from '@interfaces/ProjectAsset';
 import type { ProjectsRepositoryInterface } from '@server/interfaces/ProjectsRepositoryInterface';
 import {
   projectRowToAsset,
@@ -85,7 +85,10 @@ export class ProjectsRepository
   /**
    * @override
    */
-  public async update(id: number, input: ProjectUpsertInput): Promise<ProjectAsset> {
+  public async update(
+    id: number,
+    input: ProjectUpsertInput
+  ): Promise<ProjectAsset> {
     const supabase = await this.getSupabase();
     const res = await supabase
       .from(TABLE)

@@ -68,14 +68,42 @@
   background-color: rgba(var(--fe-color-brand), 0.22);
 }
 
-.project-asset-env-box-test {
-  background-color: rgb(var(--fe-color-primary-text) / 0.04);
-  border: 1px solid rgb(var(--fe-color-primary-border) / 0.4);
+.project-asset-env-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.5rem;
 }
 
-.project-asset-env-box-prod {
-  background-color: rgba(var(--fe-color-brand), 0.06);
-  border: 1px solid rgba(var(--fe-color-brand), 0.2);
+@media (min-width: 480px) {
+  .project-asset-env-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.project-asset-env-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.5rem;
+  background-color: rgb(var(--fe-color-primary-text) / 0.04);
+  border: 1px solid rgb(var(--fe-color-primary-border) / 0.35);
+}
+
+.project-asset-env-name {
+  font-size: 0.625rem;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgb(var(--fe-color-brand));
+}
+
+.project-asset-compact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  align-items: center;
 }
 
 .project-asset-btn-chip {

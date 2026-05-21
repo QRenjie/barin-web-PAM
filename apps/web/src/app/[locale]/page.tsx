@@ -39,7 +39,12 @@ export default async function Home({ params }: PageParamsProps) {
 
   return (
     <PageI18nProvider value={tt}>
-      <AppRoutePage tt={tt} showAdminButton showAuthButton mainProps={{ className: 'flex flex-1 flex-col' }}>
+      <AppRoutePage
+        tt={tt}
+        showAdminButton
+        showAuthButton
+        mainProps={{ className: 'flex flex-1 flex-col' }}
+      >
         <ProjectAssetCenter projects={projects} />
       </AppRoutePage>
     </PageI18nProvider>
