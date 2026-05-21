@@ -35,6 +35,9 @@ importers:
       '@brain-toolkit/antd-theme-override':
         specifier: ^0.0.3
         version: 0.0.3
+      '@brain-toolkit/brain-user':
+        specifier: ^0.2.4
+        version: 0.2.4(@types/node@20.19.41)(lightningcss@1.32.0)(reflect-metadata@0.2.2)(zustand@5.0.13(@types/react@19.2.15)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4)))
       '@brain-toolkit/react-kit':
         specifier: ^0.2.2
         version: 0.2.3(@types/node@20.19.41)(@types/react@19.2.15)(lightningcss@1.32.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(reflect-metadata@0.2.2)
@@ -315,6 +318,9 @@ packages:
 
   '@brain-toolkit/antd-theme-override@0.0.3':
     resolution: {integrity: sha512-aedDNwcB5UDG+WYj1wNNQHtfMH6zIsJoZoCk1kr0V+nJMWFmQcZlcGmOj3E2/VeO0Q8XL/4zZHfQXVXum4LHgg==}
+
+  '@brain-toolkit/brain-user@0.2.4':
+    resolution: {integrity: sha512-FeH+naiHnYcfFFurAbBY42/GBsn16A2RZVeN+Vy1xB9f2SGkEFkbTJdyNuXEU6QG+XBKA6VZZGjpu8IXE3Sp4Q==}
 
   '@brain-toolkit/react-kit@0.2.3':
     resolution: {integrity: sha512-56BSmbyuHKS3K8+CUKGgBfmm4mRxRHkh2gxClT/V+w1Sw8MPGWQ9+CfN/8U8sIfAQTo+/JVM7N+SbbrxFIQq3w==}
@@ -4359,6 +4365,28 @@ snapshots:
       - yaml
 
   '@brain-toolkit/antd-theme-override@0.0.3': {}
+
+  '@brain-toolkit/brain-user@0.2.4(@types/node@20.19.41)(lightningcss@1.32.0)(reflect-metadata@0.2.2)(zustand@5.0.13(@types/react@19.2.15)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4)))':
+    dependencies:
+      '@qlover/corekit-bridge': 3.2.0(@types/node@20.19.41)(lightningcss@1.32.0)(reflect-metadata@0.2.2)(zustand@5.0.13(@types/react@19.2.15)(react@19.2.4)(use-sync-external-store@1.6.0(react@19.2.4)))
+      '@qlover/fe-corekit': 3.3.0
+      '@qlover/logger': 1.2.0
+      lodash-es: 4.18.1
+    transitivePeerDependencies:
+      - '@types/node'
+      - debug
+      - less
+      - lightningcss
+      - reflect-metadata
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - yaml
+      - zustand
 
   '@brain-toolkit/react-kit@0.2.3(@types/node@20.19.41)(@types/react@19.2.15)(lightningcss@1.32.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(reflect-metadata@0.2.2)':
     dependencies:
