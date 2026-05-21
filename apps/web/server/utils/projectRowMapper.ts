@@ -1,6 +1,9 @@
-import type { ProjectAsset, ProjectEnvironment } from '@interfaces/ProjectAsset';
 import type { ProjectRow, ProjectUpsertInput } from '@schemas/ProjectSchema';
 import { projectEnvironmentSchema } from '@schemas/ProjectSchema';
+import type {
+  ProjectAsset,
+  ProjectEnvironment
+} from '@interfaces/ProjectAsset';
 
 function emptyToNull(value?: string): string | null {
   const trimmed = value?.trim();

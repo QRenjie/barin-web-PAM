@@ -1,10 +1,10 @@
 /** Shared Tailwind classes aligned with app theme tokens (light / dark / pink). */
 export const projectAssetTheme = {
-  page:
-    'bg-primary text-primary-text flex-1 flex flex-col w-full min-h-[calc(100dvh-3.5rem)]',
+  page: 'bg-primary text-primary-text flex-1 flex flex-col w-full min-h-[calc(100dvh-3.5rem)]',
   badge:
     'inline-flex items-center gap-2 project-asset-surface backdrop-blur-sm rounded-full px-3 py-1 shadow-sm mb-3',
-  badgeText: 'text-[11px] md:text-xs font-medium text-secondary-text tracking-wide',
+  badgeText:
+    'text-[11px] md:text-xs font-medium text-secondary-text tracking-wide',
   heading: 'text-2xl md:text-4xl font-bold tracking-tight text-primary-text',
   subtitle: 'text-secondary-text mt-1 max-w-xl text-xs md:text-sm',
   statPanel:
@@ -15,8 +15,7 @@ export const projectAssetTheme = {
   statDivider: 'h-6 w-px bg-c-border',
   viewToggleWrap:
     'flex project-asset-surface backdrop-blur-sm rounded-xl p-0.5 shadow-sm',
-  viewBtnActive:
-    'bg-elevated text-brand shadow-sm',
+  viewBtnActive: 'bg-elevated text-brand shadow-sm',
   viewBtnInactive:
     'text-secondary-text hover:bg-elevated hover:text-primary-text',
   viewBtnBase:
@@ -33,11 +32,11 @@ export const projectAssetTheme = {
   emptyDesc: 'text-tertiary-text text-xs mt-1',
   clearFilterBtn:
     'mt-3 text-sm text-brand bg-brand/10 px-4 py-1.5 rounded-full hover:bg-brand/20 transition',
-  tag:
-    'text-[10px] md:text-xs font-medium bg-elevated text-secondary-text px-2 py-0.5 rounded-full',
+  tag: 'text-[10px] md:text-xs font-medium bg-elevated text-secondary-text px-2 py-0.5 rounded-full',
   tagSm:
     'text-[9px] bg-elevated text-secondary-text px-1.5 py-0.5 rounded-full',
-  footer: 'mt-12 pt-5 border-t border-c-border text-center text-[10px] md:text-xs text-tertiary-text',
+  footer:
+    'mt-12 pt-5 border-t border-c-border text-center text-[10px] md:text-xs text-tertiary-text',
   idBadge:
     'bg-elevated rounded-full px-1.5 py-0.5 text-[10px] md:text-xs text-tertiary-text shrink-0',
   crudBtn:

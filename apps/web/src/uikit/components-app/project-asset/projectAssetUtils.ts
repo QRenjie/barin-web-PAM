@@ -1,7 +1,10 @@
 import type { ProjectAsset } from '@interfaces/ProjectAsset';
 
 /** host + path，无 maxLen 时不按字符截断，由容器 CSS 控制省略 */
-export function formatShortUrl(url: string | undefined, maxLen?: number): string {
+export function formatShortUrl(
+  url: string | undefined,
+  maxLen?: number
+): string {
   if (!url) return '';
   try {
     const urlObj = new URL(url);

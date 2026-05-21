@@ -1,6 +1,6 @@
+import type { ProjectAsset } from '@interfaces/ProjectAsset';
 import { BootstrapServer } from '@server/BootstrapServer';
 import { ProjectsController } from '@server/controllers/ProjectsController';
-import type { ProjectAsset } from '@interfaces/ProjectAsset';
 
 /** Load project assets from Supabase (empty array when table is empty or query fails). */
 export async function listProjects(): Promise<ProjectAsset[]> {

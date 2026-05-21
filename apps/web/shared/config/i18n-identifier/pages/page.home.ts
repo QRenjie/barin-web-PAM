@@ -333,7 +333,8 @@ export const PAGE_HOME_FORM_ENVIRONMENTS = 'page_home:form_environments';
  * @localZh 可添加 dev、local、prod 等任意环境名称与访问地址
  * @localEn Add any environment name (dev, local, prod, etc.) and its URL
  */
-export const PAGE_HOME_FORM_ENVIRONMENTS_HINT = 'page_home:form_environments_hint';
+export const PAGE_HOME_FORM_ENVIRONMENTS_HINT =
+  'page_home:form_environments_hint';
 
 /**
  * @description Form environment name
@@ -376,7 +377,8 @@ export const PAGE_HOME_FORM_ADD_ENVIRONMENT = 'page_home:form_add_environment';
  * @localZh 删除环境
  * @localEn Remove environment
  */
-export const PAGE_HOME_FORM_REMOVE_ENVIRONMENT = 'page_home:form_remove_environment';
+export const PAGE_HOME_FORM_REMOVE_ENVIRONMENT =
+  'page_home:form_remove_environment';
 
 /**
  * @description Form tags label
@@ -390,7 +392,8 @@ export const PAGE_HOME_FORM_TAGS = 'page_home:form_tags';
  * @localZh 前端, 营销, 自动化
  * @localEn frontend, marketing, automation
  */
-export const PAGE_HOME_FORM_TAGS_PLACEHOLDER = 'page_home:form_tags_placeholder';
+export const PAGE_HOME_FORM_TAGS_PLACEHOLDER =
+  'page_home:form_tags_placeholder';
 
 /**
  * @description Form required field message

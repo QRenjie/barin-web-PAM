@@ -1,5 +1,4 @@
 import type { ProjectAsset } from '@interfaces/ProjectAsset';
-import type { ProjectUpsertInput } from '@schemas/ProjectSchema';
 
 export interface ProjectsControllerInterface {
   list(): Promise<ProjectAsset[]>;

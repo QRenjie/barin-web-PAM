@@ -1,8 +1,8 @@
 'use client';
 
 import { Tooltip } from 'antd';
-import type { ReactNode } from 'react';
 import { formatShortUrl } from './projectAssetUtils';
+import type { ReactNode } from 'react';
 
 const linkChipBase =
   'flex max-w-full min-w-0 items-center gap-1 transition text-xs md:text-sm font-medium px-2 py-1 rounded-md overflow-hidden';

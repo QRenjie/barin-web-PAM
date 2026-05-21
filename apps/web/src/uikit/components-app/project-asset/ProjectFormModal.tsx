@@ -1,11 +1,14 @@
 'use client';
 
-import { Button, Form, Input, Modal } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Modal } from 'antd';
 import { useEffect } from 'react';
 import type { HomeI18nInterface } from '@config/i18n-mapping/HomeI18n';
-import type { ProjectAsset, ProjectEnvironment } from '@interfaces/ProjectAsset';
 import type { ProjectUpsertInput } from '@schemas/ProjectSchema';
+import type {
+  ProjectAsset,
+  ProjectEnvironment
+} from '@interfaces/ProjectAsset';
 import { projectAssetTheme } from './projectAssetTheme';
 
 export type ProjectFormValues = {
@@ -132,12 +135,15 @@ export function ProjectFormModal({
         <div className="mb-1 text-sm font-medium text-primary-text">
           {tt.formEnvironments}
         </div>
-        <p className="text-xs text-tertiary-text mb-3">{tt.formEnvironmentsHint}</p>
+        <p className="text-xs text-tertiary-text mb-3">
+          {tt.formEnvironmentsHint}
+        </p>
         <Form.List name="environments">
           {(fields, { add, remove }) => (
-            <div className="space-y-3">
+            <div data-testid="ProjectFormModal" className="space-y-3">
               {fields.map((field) => (
                 <div
+                  data-testid="ProjectFormModal"
                   key={field.key}
                   className="grid grid-cols-1 sm:grid-cols-[minmax(0,7rem)_1fr_auto] gap-2 items-start project-asset-muted-box rounded-lg p-3"
                 >
@@ -189,10 +195,7 @@ export function ProjectFormModal({
                       }
                     ]}
                   >
-                    <Input
-                      className={inputClass}
-                      placeholder="https://..."
-                    />
+                    <Input className={inputClass} placeholder="https://..." />
                   </Form.Item>
                   <Button
                     type="text"
@@ -217,10 +220,7 @@ export function ProjectFormModal({
         </Form.List>
 
         <Form.Item name="tagsText" label={tt.formTags} className="mt-4">
-          <Input
-            className={inputClass}
-            placeholder={tt.formTagsPlaceholder}
-          />
+          <Input className={inputClass} placeholder={tt.formTagsPlaceholder} />
         </Form.Item>
       </Form>
     </Modal>

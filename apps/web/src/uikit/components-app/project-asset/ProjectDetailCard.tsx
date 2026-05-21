@@ -1,9 +1,9 @@
 import type { HomeI18nInterface } from '@config/i18n-mapping/HomeI18n';
 import type { ProjectAsset } from '@interfaces/ProjectAsset';
-import { ProjectCrudActions } from './ProjectCrudActions';
-import { ProjectUrlLinkChip } from './ProjectUrlLinkChip';
 import { hasContent } from './projectAssetDisplayUtils';
 import { projectAssetTheme } from './projectAssetTheme';
+import { ProjectCrudActions } from './ProjectCrudActions';
+import { ProjectUrlLinkChip } from './ProjectUrlLinkChip';
 
 type ProjectDetailCardProps = {
   project: ProjectAsset;
@@ -15,6 +15,7 @@ type ProjectDetailCardProps = {
 function CodeIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="CodeIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -33,6 +34,7 @@ function CodeIcon({ className }: { className?: string }) {
 function UserIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="UserIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -51,6 +53,7 @@ function UserIcon({ className }: { className?: string }) {
 function LinkIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="LinkIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -85,7 +88,10 @@ export function ProjectDetailCard({
   const hasBody = hasLinks || hasOtherInfo;
 
   return (
-    <div className="project-asset-card project-asset-card-root relative backdrop-blur-sm rounded-xl md:rounded-2xl shadow-sm overflow-hidden flex flex-col h-full transition-all duration-200">
+    <div
+      data-testid="ProjectDetailCard"
+      className="project-asset-card project-asset-card-root relative backdrop-blur-sm rounded-xl md:rounded-2xl shadow-sm overflow-hidden flex flex-col h-full transition-all duration-200"
+    >
       {onEdit && onDelete && (
         <ProjectCrudActions
           projectId={project.id}
@@ -117,7 +123,11 @@ export function ProjectDetailCard({
         {hasTags && (
           <div className="flex flex-wrap gap-1.5 mt-1.5">
             {project.tags!.map((t) => (
-              <span key={t} className={projectAssetTheme.tag}>
+              <span
+                data-testid="ProjectDetailCard"
+                key={t}
+                className={projectAssetTheme.tag}
+              >
                 {t}
               </span>
             ))}
@@ -146,6 +156,7 @@ export function ProjectDetailCard({
                   <div className="project-asset-env-grid">
                     {environments.map((env) => (
                       <div
+                        data-testid="ProjectDetailCard"
                         key={`${env.name}-${env.url}`}
                         className="project-asset-env-item min-w-0"
                       >

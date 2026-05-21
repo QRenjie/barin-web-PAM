@@ -1,8 +1,8 @@
 import type { HomeI18nInterface } from '@config/i18n-mapping/HomeI18n';
 import type { ProjectAsset } from '@interfaces/ProjectAsset';
-import { ProjectCrudActions } from './ProjectCrudActions';
 import { hasContent } from './projectAssetDisplayUtils';
 import { projectAssetTheme } from './projectAssetTheme';
+import { ProjectCrudActions } from './ProjectCrudActions';
 
 type ProjectCompactItemProps = {
   project: ProjectAsset;
@@ -14,6 +14,7 @@ type ProjectCompactItemProps = {
 function CodeIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="CodeIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -32,6 +33,7 @@ function CodeIcon({ className }: { className?: string }) {
 function UserIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="UserIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -50,6 +52,7 @@ function UserIcon({ className }: { className?: string }) {
 function LinkIcon({ className }: { className?: string }) {
   return (
     <svg
+      data-testid="LinkIcon"
       className={className}
       fill="none"
       stroke="currentColor"
@@ -84,7 +87,10 @@ export function ProjectCompactItem({
   const metaLine = hasDescription || hasOtherInfo || hasTags;
 
   return (
-    <div className="project-asset-compact project-asset-card-root relative backdrop-blur-sm rounded-xl shadow-sm p-3 md:px-4 md:py-3.5 transition">
+    <div
+      data-testid="ProjectCompactItem"
+      className="project-asset-compact project-asset-card-root relative backdrop-blur-sm rounded-xl shadow-sm p-3 md:px-4 md:py-3.5 transition"
+    >
       {onEdit && onDelete && (
         <ProjectCrudActions
           projectId={project.id}
@@ -127,7 +133,11 @@ export function ProjectCompactItem({
             {hasTags && (
               <div className="flex flex-wrap gap-1">
                 {project.tags!.map((t) => (
-                  <span key={t} className={projectAssetTheme.tagSm}>
+                  <span
+                    data-testid="ProjectCompactItem"
+                    key={t}
+                    className={projectAssetTheme.tagSm}
+                  >
                     {t}
                   </span>
                 ))}
@@ -152,6 +162,7 @@ export function ProjectCompactItem({
             )}
             {environments.map((env) => (
               <a
+                data-testid="ProjectCompactItem"
                 key={`${env.name}-${env.url}`}
                 href={env.url}
                 target="_blank"
