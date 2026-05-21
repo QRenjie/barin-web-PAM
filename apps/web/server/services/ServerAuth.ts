@@ -5,15 +5,16 @@ import { API_NOT_AUTHORIZED } from '@config/i18n-identifier/api';
 import { I } from '@config/ioc-identifiter';
 import { UserSchema } from '@schemas/UserSchema';
 import type { SeedServerConfigInterface } from '@interfaces/SeedConfigInterface';
-import { SupabaseBridge } from '../repositorys/SupabaseBridge';
+import { BrainUserBridge } from '../adapters/BrainUserBridge';
 import type { ServerAuthInterface } from '../interfaces/ServerAuthInterface';
 
 @injectable()
 export class ServerAuth implements ServerAuthInterface {
   protected userTokenKey: string;
+
   constructor(
     @inject(I.AppConfig) protected server: SeedServerConfigInterface,
-    @inject(SupabaseBridge) protected supabase: SupabaseBridge
+    @inject(BrainUserBridge) protected brainUserBridge: BrainUserBridge
   ) {
     this.userTokenKey = server.userTokenKey;
   }
@@ -31,11 +32,18 @@ export class ServerAuth implements ServerAuthInterface {
    * @override
    */
   public async hasAuth(): Promise<boolean> {
-    const supabase = await this.supabase.getSupabase();
+    const token = await this.getAuth();
 
-    const { data } = await supabase.auth.getClaims();
+    if (!token.trim()) {
+      return false;
+    }
 
-    return !!data?.claims;
+    try {
+      await this.brainUserBridge.getUserByToken(token);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -69,10 +77,16 @@ export class ServerAuth implements ServerAuthInterface {
    * @override
    */
   public async getUser(): Promise<UserSchema | null> {
-    const supabase = await this.supabase.getSupabase();
+    const token = await this.getAuth();
 
-    const { data } = await supabase.auth.getUser();
+    if (!token.trim()) {
+      return null;
+    }
 
-    return data.user ? this.supabase.toUserSchema(data.user) : null;
+    try {
+      return await this.brainUserBridge.getUserByToken(token);
+    } catch {
+      return null;
+    }
   }
 }

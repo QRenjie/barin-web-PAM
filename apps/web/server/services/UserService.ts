@@ -1,15 +1,11 @@
-import { ExecutorError, type EncryptorInterface } from '@qlover/fe-corekit';
-import { Session, User } from '@supabase/supabase-js';
-import { isString } from 'lodash';
+import { ExecutorError } from '@qlover/fe-corekit';
 import { inject, injectable } from '@shared/container';
 import { API_USER_NOT_FOUND } from '@config/i18n-identifier/api';
 import { I } from '@config/ioc-identifiter';
-import { UserRole, type UserSchema } from '@schemas/UserSchema';
-import type { SeedServerConfigInterface } from '@interfaces/SeedConfigInterface';
+import type { UserSchema } from '@schemas/UserSchema';
+import { BrainUserBridge } from '../adapters/BrainUserBridge';
 import { ServerAuth } from './ServerAuth';
 import { RequestLogsRepository } from '../repositorys/RequestLogsRepository';
-import { SupabaseBridge } from '../repositorys/SupabaseBridge';
-import { PasswordEncrypt } from '../utils/PasswordEncrypt';
 import type { RequestLogsRepositoryInterface } from '../interfaces/RequestLogsRepositoryInterface';
 import type { ServerAuthInterface } from '../interfaces/ServerAuthInterface';
 import type {
@@ -25,15 +21,11 @@ export class UserService implements UserServiceInterface {
   @inject(I.Logger)
   protected logger!: LoggerInterface;
 
-  @inject(I.AppConfig)
-  protected appConfig!: SeedServerConfigInterface;
-
   constructor(
     @inject(ServerAuth)
     protected userAuth: ServerAuthInterface,
-    @inject(PasswordEncrypt)
-    protected encryptor: EncryptorInterface<string, string>,
-    @inject(SupabaseBridge) protected supabaseBridge: SupabaseBridge,
+    @inject(BrainUserBridge)
+    protected brainUserBridge: BrainUserBridge,
     @inject(RequestLogsRepository)
     protected requestLogsRepository: RequestLogsRepositoryInterface
   ) {}
@@ -44,149 +36,83 @@ export class UserService implements UserServiceInterface {
   public async register(
     params: UserServiceRegisterParams
   ): Promise<UserSchema> {
-    const supabase = await this.supabaseBridge.getSupabase();
-
-    // TODO: 检查 username, 是否重复
-    // const user = await this.userRepository.getUserByEmail(params.email);
-    // if (!isEmpty(user)) {
-    //   throw new Error(API_USER_ALREADY_EXISTS);
-    // }
-
-    const result = await supabase.auth.signUp({
+    const user = await this.brainUserBridge.register({
       email: params.email,
       password: params.password,
-
-      options: {
-        emailRedirectTo: `${this.appConfig.appHost}/api/callback`
-      }
+      username: params.username
     });
-    this.supabaseBridge.throwIfError(result);
 
-    const { user, session } = result.data;
+    this.logger.info('brain-user register success', { email: user.email });
 
-    // Supabase 开启「Confirm email」时：注册成功但 user/session 为空，需先点邮件链接
-    if (!user) {
-      this.logger.info('signUp pending email confirmation', {
-        email: params.email
-      });
-      return {
-        id: '',
-        email: params.email,
-        role: UserRole.USER,
-        password: '',
-        credential_token: '',
-        email_confirmed_at: null,
-        created_at: new Date().toISOString(),
-        updated_at: null
-      };
-    }
-
-    const schema = this.supabaseBridge.toUserSchema(user);
-
-    // 已创建用户但未下发 session（常见于待验证邮箱）
-    if (!session && user.email_confirmed_at == null) {
-      schema.email_confirmed_at = null;
-    }
-
-    return schema;
+    return user;
   }
 
   /**
    * @override
    */
   public async login(params: UserLoginParams): Promise<UserSchema> {
-    const supabase = await this.supabaseBridge.getSupabase();
+    const user = params.authCode
+      ? await this.brainUserBridge.loginWithGoogle(params.authCode)
+      : await this.brainUserBridge.login({
+          email: params.email,
+          password: params.password
+        });
 
-    if (params.authCode) {
-      const ares = await supabase.auth.exchangeCodeForSession(params.authCode);
-      this.supabaseBridge.throwIfError(ares);
-    }
-
-    const result = await supabase.auth.signInWithPassword({
-      email: params.email,
-      password: params.password
-    });
-    this.supabaseBridge.throwIfError(result);
-
-    this.logger.info('supbase login succees', result.data);
+    this.logger.info('brain-user login success', { email: user.email });
 
     await this.requestLogsRepository.insertEvent({
       event_category: 'auth',
       event_type: 'login',
       success: true,
       payload: {
-        auth_provider: 'supabase',
+        auth_provider: 'brain-user',
         user_agent: params.loginContext?.userAgent ?? null,
         ip_address: params.loginContext?.ipAddress ?? null,
         login_method: params.authCode ? 'oauth' : 'password'
       }
     });
 
-    return this.supabaseBridge.toUserSchema(result.data.user!);
+    return user;
   }
 
   /**
    * @override
    */
   public async logout(context?: UserLoginContext): Promise<void> {
+    const token = await this.userAuth.getAuth();
+
     await this.requestLogsRepository.insertEvent({
       event_category: 'auth',
       event_type: 'logout',
       success: true,
       payload: {
-        auth_provider: 'supabase',
+        auth_provider: 'brain-user',
         user_agent: context?.userAgent ?? null,
         ip_address: context?.ipAddress ?? null
       }
     });
 
-    const supabase = await this.supabaseBridge.getSupabase();
-
-    const response = await supabase.auth.signOut();
-
-    this.supabaseBridge.throwIfError(response);
-  }
-
-  public async exchangeSessionForCode(code: string): Promise<{
-    user: User;
-    session: Session;
-  }> {
-    if (code == null || !isString(code)) {
-      throw new ExecutorError('code is required');
-    }
-
-    const supabase = await this.supabaseBridge.getSupabase();
-    const response = await supabase.auth.exchangeCodeForSession(code);
-    this.supabaseBridge.throwIfError(response);
-
-    this.logger.debug('exchangeSessionForCode', response.data);
-
-    if (!response.data.user) {
-      throw new ExecutorError(API_USER_NOT_FOUND);
-    }
-
-    return response.data;
+    await this.brainUserBridge.logout(token);
   }
 
   /**
    * @override
    */
   public async refresh(): Promise<UserSchema> {
-    throw new Error('Method not implemented.');
+    const token = await this.userAuth.getAuth();
+    return await this.brainUserBridge.getUserByToken(token);
   }
 
   /**
    * @override
    */
   public async getUser(): Promise<UserSchema> {
-    const supabase = await this.supabaseBridge.getSupabase();
-    const response = await supabase.auth.getUser();
-    this.supabaseBridge.throwIfError(response);
+    const token = await this.userAuth.getAuth();
 
-    if (!response.data.user) {
+    if (!token.trim()) {
       throw new ExecutorError(API_USER_NOT_FOUND);
     }
 
-    return this.supabaseBridge.toUserSchema(response.data.user);
+    return await this.brainUserBridge.getUserByToken(token);
   }
 }

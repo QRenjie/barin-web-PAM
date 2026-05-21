@@ -1,6 +1,7 @@
 import type { UserSchema } from '@schemas/UserSchema';
 
 export type UserServiceRegisterParams = {
+  /** Display name from register form; mapped to brain-user first/last name on server. */
   username?: string;
   email: string;
   password: string;

@@ -73,7 +73,9 @@ export class UserController {
     return user;
   }
 
-  public async register(requestBody: LoginSchema): Promise<UserSchema> {
+  public async register(
+    requestBody: LoginSchema & { username?: string }
+  ): Promise<UserSchema> {
     try {
       if (requestBody.password) {
         requestBody.password = this.stringEncryptor.decrypt(
@@ -88,17 +90,27 @@ export class UserController {
     }
 
     const body = await this.loginValidator.getThrow(requestBody);
+    const username =
+      typeof requestBody.username === 'string'
+        ? requestBody.username.trim()
+        : undefined;
 
     const user = await this.userService.register({
       email: body.email,
-      password: body.password
+      password: body.password,
+      username: username || undefined
     });
+
+    if (user.credential_token) {
+      await this.serverAuth.setAuth(user.credential_token);
+    }
 
     return user;
   }
 
   public async logout(serverContext?: UserLoginContext): Promise<void> {
-    return await this.userService.logout(serverContext);
+    await this.userService.logout(serverContext);
+    await this.serverAuth.clear();
   }
 
   public async refresh(): Promise<UserSchema> {

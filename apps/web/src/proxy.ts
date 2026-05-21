@@ -4,7 +4,7 @@
 import createMiddleware from 'next-intl/middleware';
 
 // Import your routing configuration which contains all locales, defaultLocale, and pathnames
-import { updateSession } from '@shared/supabase/proxy';
+import { updateSession } from '@shared/auth/sessionProxy';
 import { routing } from './i18n/routing';
 import type { NextRequest } from 'next/server';
 
