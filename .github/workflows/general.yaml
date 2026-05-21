@@ -20,8 +20,5 @@ jobs:
           node-version: '20.19.0'
       - run: npm install -g pnpm
       - run: pnpm install --frozen-lockfile
-
-      # NX Cloud Task
-      - name: NX Cloud Build (exclude examples)
-        run: pnpm build
+      - run: pnpm build
       - run: pnpm lint
