@@ -1,13 +1,12 @@
 import type { HomeI18nInterface } from '@config/i18n-mapping/HomeI18n';
 import type { ProjectAsset } from '@interfaces/ProjectAsset';
 import { ProjectCrudActions } from './ProjectCrudActions';
+import { ProjectUrlLinkChip } from './ProjectUrlLinkChip';
 import { projectAssetTheme } from './projectAssetTheme';
-import { formatShortUrl } from './projectAssetUtils';
 
 type ProjectDetailCardProps = {
   project: ProjectAsset;
   tt: HomeI18nInterface;
-  canManage?: boolean;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
 };
@@ -48,7 +47,7 @@ function UserIcon({ className }: { className?: string }) {
   );
 }
 
-function CheckCircleIcon({ className }: { className?: string }) {
+function LinkIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -60,37 +59,15 @@ function CheckCircleIcon({ className }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={1.8}
-        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
       />
     </svg>
   );
 }
-
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.8}
-        d="M5 13l4 4L19 7"
-      />
-    </svg>
-  );
-}
-
-const linkChipBase =
-  'inline-flex items-center gap-1 transition text-xs md:text-sm font-medium px-2 py-1 rounded-md break-all';
 
 export function ProjectDetailCard({
   project,
   tt,
-  canManage,
   onEdit,
   onDelete
 }: ProjectDetailCardProps) {
@@ -105,9 +82,11 @@ export function ProjectDetailCard({
       </div>
     ) : null;
 
+  const environments = project.environments ?? [];
+
   return (
     <div className="project-asset-card project-asset-card-root relative backdrop-blur-sm rounded-xl md:rounded-2xl shadow-sm overflow-hidden flex flex-col h-full transition-all duration-200">
-      {canManage && onEdit && onDelete && (
+      {onEdit && onDelete && (
         <ProjectCrudActions
           projectId={project.id}
           onEdit={onEdit}
@@ -133,73 +112,49 @@ export function ProjectDetailCard({
         {tagBadges}
       </div>
 
-      <div className="px-3 md:px-5 pt-2 pb-2 space-y-2 flex-1">
-        <div>
+      <div className="px-3 md:px-5 pt-2 pb-2 space-y-2 flex-1 min-w-0">
+        <div className="min-w-0">
           <div className="text-[10px] md:text-xs font-semibold text-secondary-text mb-0.5">
             📂 {tt.repoLabel}
           </div>
           {project.repoUrl ? (
-            <a
+            <ProjectUrlLinkChip
               href={project.repoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${linkChipBase} project-asset-link-repo`}
-            >
-              <CodeIcon className="w-3 h-3 shrink-0" />
-              <span className="truncate">
-                {formatShortUrl(project.repoUrl, 40)}
-              </span>
-            </a>
+              className="project-asset-link-repo"
+              icon={<CodeIcon className="w-3 h-3 shrink-0" />}
+            />
           ) : (
             <span className="text-tertiary-text text-xs">🔗 {tt.noRepo}</span>
           )}
         </div>
 
-        <div className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-2">
-          <div className="project-asset-env-box-test rounded-lg p-1.5 md:p-2">
-            <div className="text-[10px] md:text-xs font-medium text-secondary-text mb-0.5">
-              🧪 {tt.testLabel}
-            </div>
-            {project.testUrl ? (
-              <a
-                href={project.testUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${linkChipBase} project-asset-link-test`}
-              >
-                <CheckCircleIcon className="w-3 h-3" />
-                <span className="truncate">
-                  {formatShortUrl(project.testUrl, 30)}
-                </span>
-              </a>
-            ) : (
-              <span className="text-tertiary-text text-xs">
-                🚧 {tt.notConfigured}
-              </span>
-            )}
+        <div>
+          <div className="text-[10px] md:text-xs font-semibold text-secondary-text mb-1">
+            🌐 {tt.environmentsLabel}
           </div>
-          <div className="project-asset-env-box-prod rounded-lg p-1.5 md:p-2">
-            <div className="text-[10px] md:text-xs font-medium text-brand mb-0.5">
-              🚀 {tt.prodLabel}
+          {environments.length > 0 ? (
+            <div className="grid grid-cols-1 min-[480px]:grid-cols-2 gap-2">
+              {environments.map((env) => (
+                <div
+                  key={`${env.name}-${env.url}`}
+                  className="project-asset-env-box-test rounded-lg p-1.5 md:p-2 min-w-0"
+                >
+                  <div className="text-[10px] md:text-xs font-medium text-brand mb-0.5 uppercase tracking-wide">
+                    {env.name}
+                  </div>
+                  <ProjectUrlLinkChip
+                    href={env.url}
+                    className="project-asset-link-test"
+                    icon={<LinkIcon className="w-3 h-3 shrink-0" />}
+                  />
+                </div>
+              ))}
             </div>
-            {project.prodUrl ? (
-              <a
-                href={project.prodUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${linkChipBase} project-asset-link-prod`}
-              >
-                <CheckIcon className="w-3 h-3" />
-                <span className="truncate">
-                  {formatShortUrl(project.prodUrl, 30)}
-                </span>
-              </a>
-            ) : (
-              <span className="text-tertiary-text text-xs">
-                🔒 {tt.notConfigured}
-              </span>
-            )}
-          </div>
+          ) : (
+            <span className="text-tertiary-text text-xs">
+              🚧 {tt.noEnvironments}
+            </span>
+          )}
         </div>
 
         <div className="mt-1 pt-1.5 border-t border-c-border project-asset-muted-box rounded-lg p-2 text-[10px] md:text-xs leading-relaxed text-secondary-text">

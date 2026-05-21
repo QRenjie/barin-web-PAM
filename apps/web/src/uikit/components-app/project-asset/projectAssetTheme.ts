@@ -1,6 +1,7 @@
 /** Shared Tailwind classes aligned with app theme tokens (light / dark / pink). */
 export const projectAssetTheme = {
-  page: 'bg-primary text-primary-text min-h-full',
+  page:
+    'bg-primary text-primary-text flex-1 flex flex-col w-full min-h-[calc(100dvh-3.5rem)]',
   badge:
     'inline-flex items-center gap-2 project-asset-surface backdrop-blur-sm rounded-full px-3 py-1 shadow-sm mb-3',
   badgeText: 'text-[11px] md:text-xs font-medium text-secondary-text tracking-wide',
@@ -40,9 +41,9 @@ export const projectAssetTheme = {
   idBadge:
     'bg-elevated rounded-full px-1.5 py-0.5 text-[10px] md:text-xs text-tertiary-text shrink-0',
   crudBtn:
-    'p-1.5 bg-secondary border border-c-border rounded-full shadow-sm hover:bg-elevated transition',
+    'p-1.5 bg-bg-container border border-c-border rounded-full shadow-sm hover:bg-elevated transition',
   crudBtnCompact:
-    'p-1 bg-secondary border border-c-border rounded-full shadow-sm hover:bg-elevated transition',
+    'p-1 bg-bg-container border border-c-border rounded-full shadow-sm hover:bg-elevated transition',
 
   /** Ant Design Input/TextArea — aligned with LoginForm */
   formInput:

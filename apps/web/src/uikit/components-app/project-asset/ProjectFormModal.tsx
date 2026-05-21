@@ -1,9 +1,10 @@
 'use client';
 
-import { Form, Input, Modal } from 'antd';
+import { Button, Form, Input, Modal } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
 import type { HomeI18nInterface } from '@config/i18n-mapping/HomeI18n';
-import type { ProjectAsset } from '@interfaces/ProjectAsset';
+import type { ProjectAsset, ProjectEnvironment } from '@interfaces/ProjectAsset';
 import type { ProjectUpsertInput } from '@schemas/ProjectSchema';
 import { projectAssetTheme } from './projectAssetTheme';
 
@@ -13,8 +14,7 @@ export type ProjectFormValues = {
   description?: string;
   otherInfo?: string;
   repoUrl?: string;
-  testUrl?: string;
-  prodUrl?: string;
+  environments?: ProjectEnvironment[];
   tagsText?: string;
 };
 
@@ -34,8 +34,7 @@ function assetToFormValues(project: ProjectAsset): ProjectFormValues {
     description: project.description,
     otherInfo: project.otherInfo,
     repoUrl: project.repoUrl ?? '',
-    testUrl: project.testUrl ?? '',
-    prodUrl: project.prodUrl ?? '',
+    environments: project.environments.map((e) => ({ ...e })),
     tagsText: (project.tags ?? []).join(', ')
   };
 }
@@ -45,14 +44,20 @@ function formValuesToUpsert(values: ProjectFormValues): ProjectUpsertInput {
     .split(',')
     .map((t) => t.trim())
     .filter(Boolean);
+  const environments = (values.environments ?? [])
+    .map((e) => ({
+      name: e.name?.trim() ?? '',
+      url: e.url?.trim() ?? ''
+    }))
+    .filter((e) => e.name && e.url);
+
   return {
     name: values.name.trim(),
     author: values.author.trim(),
     description: values.description?.trim() ?? '',
     otherInfo: values.otherInfo?.trim() ?? '',
     repoUrl: values.repoUrl?.trim() || undefined,
-    testUrl: values.testUrl?.trim() || undefined,
-    prodUrl: values.prodUrl?.trim() || undefined,
+    environments,
     tags
   };
 }
@@ -73,6 +78,7 @@ export function ProjectFormModal({
       form.setFieldsValue(assetToFormValues(editing));
     } else {
       form.resetFields();
+      form.setFieldsValue({ environments: [] });
     }
   }, [open, editing, form]);
 
@@ -87,7 +93,7 @@ export function ProjectFormModal({
       confirmLoading={saving}
       okText={tt.modalSave}
       cancelText={tt.modalCancel}
-      width={640}
+      width={720}
       destroyOnClose
       className={projectAssetTheme.formModal}
     >
@@ -119,18 +125,98 @@ export function ProjectFormModal({
         <Form.Item name="otherInfo" label={tt.formOtherInfo}>
           <Input className={inputClass} />
         </Form.Item>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-          <Form.Item name="repoUrl" label={tt.formRepoUrl}>
-            <Input className={inputClass} placeholder="https://..." />
-          </Form.Item>
-          <Form.Item name="testUrl" label={tt.formTestUrl}>
-            <Input className={inputClass} placeholder="https://test..." />
-          </Form.Item>
-        </div>
-        <Form.Item name="prodUrl" label={tt.formProdUrl}>
+        <Form.Item name="repoUrl" label={tt.formRepoUrl}>
           <Input className={inputClass} placeholder="https://..." />
         </Form.Item>
-        <Form.Item name="tagsText" label={tt.formTags}>
+
+        <div className="mb-1 text-sm font-medium text-primary-text">
+          {tt.formEnvironments}
+        </div>
+        <p className="text-xs text-tertiary-text mb-3">{tt.formEnvironmentsHint}</p>
+        <Form.List name="environments">
+          {(fields, { add, remove }) => (
+            <div className="space-y-3">
+              {fields.map((field) => (
+                <div
+                  key={field.key}
+                  className="grid grid-cols-1 sm:grid-cols-[minmax(0,7rem)_1fr_auto] gap-2 items-start project-asset-muted-box rounded-lg p-3"
+                >
+                  <Form.Item
+                    name={[field.name, 'name']}
+                    label={tt.formEnvName}
+                    className="mb-0"
+                    rules={[
+                      {
+                        validator: async (_, name: string | undefined) => {
+                          const url = form.getFieldValue([
+                            'environments',
+                            field.name,
+                            'url'
+                          ]) as string | undefined;
+                          if (!name?.trim() && !url?.trim()) return;
+                          if (!name?.trim()) {
+                            throw new Error(tt.formRequired);
+                          }
+                        }
+                      }
+                    ]}
+                  >
+                    <Input
+                      className={inputClass}
+                      placeholder={tt.formEnvNamePlaceholder}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name={[field.name, 'url']}
+                    label={tt.formEnvUrl}
+                    className="mb-0"
+                    rules={[
+                      {
+                        validator: async (_, url: string | undefined) => {
+                          const name = form.getFieldValue([
+                            'environments',
+                            field.name,
+                            'name'
+                          ]) as string | undefined;
+                          if (!name?.trim() && !url?.trim()) return;
+                          if (!url?.trim()) {
+                            throw new Error(tt.formRequired);
+                          }
+                          if (!/^https?:\/\/.+/i.test(url.trim())) {
+                            throw new Error(tt.formEnvUrlInvalid);
+                          }
+                        }
+                      }
+                    ]}
+                  >
+                    <Input
+                      className={inputClass}
+                      placeholder="https://..."
+                    />
+                  </Form.Item>
+                  <Button
+                    type="text"
+                    danger
+                    icon={<MinusCircleOutlined />}
+                    onClick={() => remove(field.name)}
+                    className="sm:mt-[30px]"
+                    aria-label={tt.formRemoveEnvironment}
+                  />
+                </div>
+              ))}
+              <Button
+                type="dashed"
+                onClick={() => add({ name: '', url: '' })}
+                icon={<PlusOutlined />}
+                block
+              >
+                {tt.formAddEnvironment}
+              </Button>
+            </div>
+          )}
+        </Form.List>
+
+        <Form.Item name="tagsText" label={tt.formTags} className="mt-4">
           <Input
             className={inputClass}
             placeholder={tt.formTagsPlaceholder}

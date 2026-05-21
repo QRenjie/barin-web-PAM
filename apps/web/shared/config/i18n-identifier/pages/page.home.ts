@@ -308,6 +308,77 @@ export const PAGE_HOME_FORM_TEST_URL = 'page_home:form_test_url';
 export const PAGE_HOME_FORM_PROD_URL = 'page_home:form_prod_url';
 
 /**
+ * @description Environments section label (card view)
+ * @localZh 部署环境
+ * @localEn Environments
+ */
+export const PAGE_HOME_ENVIRONMENTS_LABEL = 'page_home:environments_label';
+
+/**
+ * @description No environments configured
+ * @localZh 暂未配置环境
+ * @localEn No environments configured
+ */
+export const PAGE_HOME_NO_ENVIRONMENTS = 'page_home:no_environments';
+
+/**
+ * @description Form environments section
+ * @localZh 部署环境
+ * @localEn Deployment environments
+ */
+export const PAGE_HOME_FORM_ENVIRONMENTS = 'page_home:form_environments';
+
+/**
+ * @description Form environments hint
+ * @localZh 可添加 dev、local、prod 等任意环境名称与访问地址
+ * @localEn Add any environment name (dev, local, prod, etc.) and its URL
+ */
+export const PAGE_HOME_FORM_ENVIRONMENTS_HINT = 'page_home:form_environments_hint';
+
+/**
+ * @description Form environment name
+ * @localZh 环境名称
+ * @localEn Environment name
+ */
+export const PAGE_HOME_FORM_ENV_NAME = 'page_home:form_env_name';
+
+/**
+ * @description Form environment name placeholder
+ * @localZh 如 dev、local、prod
+ * @localEn e.g. dev, local, prod
+ */
+export const PAGE_HOME_FORM_ENV_NAME_PLACEHOLDER =
+  'page_home:form_env_name_placeholder';
+
+/**
+ * @description Form environment URL
+ * @localZh 访问地址
+ * @localEn URL
+ */
+export const PAGE_HOME_FORM_ENV_URL = 'page_home:form_env_url';
+
+/**
+ * @description Invalid environment URL
+ * @localZh 地址需以 http:// 或 https:// 开头
+ * @localEn URL must start with http:// or https://
+ */
+export const PAGE_HOME_FORM_ENV_URL_INVALID = 'page_home:form_env_url_invalid';
+
+/**
+ * @description Add environment button
+ * @localZh 添加环境
+ * @localEn Add environment
+ */
+export const PAGE_HOME_FORM_ADD_ENVIRONMENT = 'page_home:form_add_environment';
+
+/**
+ * @description Remove environment button
+ * @localZh 删除环境
+ * @localEn Remove environment
+ */
+export const PAGE_HOME_FORM_REMOVE_ENVIRONMENT = 'page_home:form_remove_environment';
+
+/**
  * @description Form tags label
  * @localZh 标签 (用逗号分隔)
  * @localEn Tags (comma-separated)

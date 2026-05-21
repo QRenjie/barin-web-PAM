@@ -1,4 +1,8 @@
--- Unified request / operation log (API calls, auth events, etc.) with user-scoped RLS (Supabase / Postgres)
+-- Initial schema (fresh install): request_logs + projects
+
+-- ---------------------------------------------------------------------------
+-- request_logs: API / auth / server event log (user-scoped RLS)
+-- ---------------------------------------------------------------------------
 
 create table public.request_logs (
   id uuid primary key default gen_random_uuid(),
@@ -29,14 +33,54 @@ create index idx_request_logs_request_id on public.request_logs (request_id);
 
 alter table public.request_logs enable row level security;
 
--- Signed-in users read only their own rows (anonymous-only rows are not visible via RLS)
 create policy "request_logs_select_own" on public.request_logs
   for select
   using (user_id is not null and auth.uid() = user_id);
 
--- Inserts must be self-attributed or anonymous (no forging another user)
 create policy "request_logs_insert_self_or_anon" on public.request_logs
   for insert
   with check (user_id is null or auth.uid() = user_id);
 
--- No update/delete: append-only (service role bypasses RLS if needed)
+-- ---------------------------------------------------------------------------
+-- projects: homepage project asset catalog (public read; authenticated writes)
+-- ---------------------------------------------------------------------------
+
+create table public.projects (
+  id bigint generated always as identity primary key,
+  name text not null,
+  repo_url text,
+  environments jsonb not null default '[]'::jsonb,
+  author text not null default '',
+  other_info text not null default '',
+  description text not null default '',
+  tags text[] not null default '{}',
+  sort_order int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+comment on table public.projects is 'Company project assets: repo, deployment environments, owner, tags; listed on the public home page.';
+comment on column public.projects.environments is 'Deployment environments: [{ "name": "dev|local|prod|...", "url": "https://..." }]';
+
+create index idx_projects_sort_order on public.projects (sort_order asc, id asc);
+
+alter table public.projects enable row level security;
+
+create policy "projects_select_public" on public.projects
+  for select
+  using (true);
+
+create policy "projects_insert_authenticated" on public.projects
+  for insert
+  to authenticated
+  with check (true);
+
+create policy "projects_update_authenticated" on public.projects
+  for update
+  to authenticated
+  using (true);
+
+create policy "projects_delete_authenticated" on public.projects
+  for delete
+  to authenticated
+  using (true);

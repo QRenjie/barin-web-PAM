@@ -6,7 +6,6 @@ import { projectAssetTheme } from './projectAssetTheme';
 type ProjectCompactItemProps = {
   project: ProjectAsset;
   tt: HomeI18nInterface;
-  canManage?: boolean;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
 };
@@ -47,7 +46,7 @@ function UserIcon({ className }: { className?: string }) {
   );
 }
 
-function CheckCircleIcon({ className }: { className?: string }) {
+function LinkIcon({ className }: { className?: string }) {
   return (
     <svg
       className={className}
@@ -59,37 +58,18 @@ function CheckCircleIcon({ className }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={1.8}
-        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
-  );
-}
-
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.8}
-        d="M5 13l4 4L19 7"
+        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
       />
     </svg>
   );
 }
 
 const btnChip =
-  'flex items-center justify-center gap-1 md:gap-1.5 py-1.5 rounded-lg text-xs md:text-sm transition w-full';
+  'flex items-center justify-center gap-1 md:gap-1.5 py-1.5 rounded-lg text-xs md:text-sm transition w-full min-w-0';
 
 export function ProjectCompactItem({
   project,
   tt,
-  canManage,
   onEdit,
   onDelete
 }: ProjectCompactItemProps) {
@@ -98,60 +78,54 @@ export function ProjectCompactItem({
       ? `${project.otherInfo.substring(0, 60)}…`
       : project.otherInfo;
 
+  const environments = project.environments ?? [];
+
   const repoButton = project.repoUrl ? (
     <a
       href={project.repoUrl}
       target="_blank"
       rel="noopener noreferrer"
       className={`${btnChip} project-asset-btn-chip`}
+      title={project.repoUrl}
     >
-      <CodeIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-      <span className="hidden sm:inline">{tt.btnRepo}</span>
+      <CodeIcon className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+      <span className="hidden sm:inline truncate">{tt.btnRepo}</span>
     </a>
   ) : (
     <span className={`${btnChip} project-asset-btn-chip-muted`}>
-      <CodeIcon className="w-3.5 h-3.5" />
+      <CodeIcon className="w-3.5 h-3.5 shrink-0" />
       <span className="hidden sm:inline">{tt.noRepo}</span>
     </span>
   );
 
-  const testButton = project.testUrl ? (
-    <a
-      href={project.testUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`${btnChip} project-asset-link-test`}
-    >
-      <CheckCircleIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-      <span className="hidden sm:inline">{tt.btnTest}</span>
-    </a>
-  ) : (
-    <span className={`${btnChip} project-asset-btn-chip-muted`}>
-      <CheckCircleIcon className="w-3.5 h-3.5" />
-      <span className="hidden sm:inline">{tt.noTest}</span>
-    </span>
-  );
-
-  const prodButton = project.prodUrl ? (
-    <a
-      href={project.prodUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`${btnChip} project-asset-btn-chip`}
-    >
-      <CheckIcon className="w-3.5 h-3.5 md:w-4 md:h-4" />
-      <span className="hidden sm:inline">{tt.btnProd}</span>
-    </a>
-  ) : (
-    <span className={`${btnChip} project-asset-btn-chip-muted`}>
-      <CheckIcon className="w-3.5 h-3.5" />
-      <span className="hidden sm:inline">{tt.notConfigured}</span>
-    </span>
-  );
+  const envButtons =
+    environments.length > 0
+      ? environments.map((env) => (
+          <a
+            key={`${env.name}-${env.url}`}
+            href={env.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${btnChip} project-asset-link-test`}
+            title={env.url}
+          >
+            <LinkIcon className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate uppercase">{env.name}</span>
+          </a>
+        ))
+      : [
+          <span
+            key="no-env"
+            className={`${btnChip} project-asset-btn-chip-muted col-span-full`}
+          >
+            <LinkIcon className="w-3.5 h-3.5 shrink-0" />
+            <span>{tt.noEnvironments}</span>
+          </span>
+        ];
 
   return (
     <div className="project-asset-compact project-asset-card-root relative backdrop-blur-sm rounded-xl shadow-sm p-3 md:p-4 transition">
-      {canManage && onEdit && onDelete && (
+      {onEdit && onDelete && (
         <ProjectCrudActions
           projectId={project.id}
           onEdit={onEdit}
@@ -193,10 +167,14 @@ export function ProjectCompactItem({
             : project.description}
         </div>
 
-        <div className="grid grid-cols-3 gap-2 mt-1">
+        <div
+          className="grid gap-2 mt-1"
+          style={{
+            gridTemplateColumns: `repeat(${Math.min(Math.max(environments.length + 1, 2), 4)}, minmax(0, 1fr))`
+          }}
+        >
           {repoButton}
-          {testButton}
-          {prodButton}
+          {envButtons}
         </div>
       </div>
     </div>

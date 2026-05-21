@@ -182,6 +182,7 @@ export function ProjectAssetCenter({
       Modal.confirm({
         title: tt.confirmDelete,
         okType: 'danger',
+        centered: true,
         onOk: async () => {
           try {
             await deleteProject(id);
@@ -220,13 +221,11 @@ export function ProjectAssetCenter({
     [editing, message, tt]
   );
 
-  const crudProps = canManage
-    ? { canManage: true as const, onEdit: openEdit, onDelete: handleDelete }
-    : {};
+  const crudProps = { onEdit: openEdit, onDelete: handleDelete };
 
   return (
     <div data-testid="ProjectAssetCenter" className={projectAssetTheme.page}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 py-5 md:py-10">
+      <div className="max-w-7xl mx-auto flex flex-1 flex-col w-full px-4 sm:px-5 lg:px-8 py-5 md:py-10">
         <div className="mb-6 md:mb-8 flex flex-col items-start gap-4 md:flex-row md:justify-between md:items-end">
           <div className="w-full">
             <div className={projectAssetTheme.badge}>
@@ -344,10 +343,10 @@ export function ProjectAssetCenter({
         ) : view === 'card' ? (
           <div
             data-testid="ProjectAssetCards"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 auto-rows-fr"
+            className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 auto-rows-fr"
           >
             {filtered.map((project) => (
-              <div key={project.id} className="project-asset-fade-in">
+              <div key={project.id} className="project-asset-fade-in min-w-0">
                 <ProjectDetailCard project={project} tt={tt} {...crudProps} />
               </div>
             ))}
